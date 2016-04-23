@@ -6,17 +6,17 @@
     -fx-background-insets: 0,1,2;
     -fx-background-radius: 3,2,1;
     -fx-padding: 7 30 7 30;
-    -fx-min-width: 250px;
-    -fx-max-width: 250px;
+    -fx-pref-width: 250px;
     -fx-text-fill: white;
     -fx-font-family: "Verdana";
     -fx-font-weight: bold;
-    -fx-font-size: 28px;
+    -fx-font-size: 2em;
 }
 
 .button:hover {
 	-fx-background-color: 
         linear-gradient(#bb0a21, #252627, #bb0a21);
+    -fx-padding: 8 30 6 30;
 }
 
 .button:pressed {

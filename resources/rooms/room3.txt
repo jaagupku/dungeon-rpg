@@ -1,0 +1,7 @@
+map_size=7,3;
+map_tiles=
+1111111
+$room3to4$000001
+11111$n1$1;
+add_monster=2,1,7;
+add_monster=4,1,7;

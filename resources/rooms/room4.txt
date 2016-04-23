@@ -1,0 +1,12 @@
+map_size=7,6;
+map_tiles=
+1111111
+1000001
+1000001
+1000001
+100000$room3to4$
+111$r3$111
+;
+add_monster=3,2,2;
+add_monster=1,1,1;
+add_monster=6,1,1;
