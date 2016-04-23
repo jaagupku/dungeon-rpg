@@ -1,0 +1,25 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.button {
+    -fx-background-color: 
+        linear-gradient(#bb0a21, #252627, #252627, #252627, #bb0a21);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 7 30 7 30;
+    -fx-min-width: 250px;
+    -fx-max-width: 250px;
+    -fx-text-fill: white;
+    -fx-font-family: "Verdana";
+    -fx-font-weight: bold;
+    -fx-font-size: 28px;
+}
+
+.button:hover {
+	-fx-background-color: 
+        linear-gradient(#bb0a21, #252627, #bb0a21);
+}
+
+.button:pressed {
+	-fx-background-color: 
+        linear-gradient(#bb0a21, #353637, #353637, #bb0a21);
+}
