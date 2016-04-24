@@ -35,7 +35,7 @@ public class Game {
 					world.movePlayer(World.WEST);
 				} else if (event.getCode() == KeyCode.D) {
 					world.movePlayer(World.EAST);
-				}
+				} 
 				world.monsterTurn();
 				render();
 				event.consume();
@@ -51,8 +51,13 @@ public class Game {
 		world.render(canvas);
 	}
 
-	public Scene getGameScene(Stage stage) {
+	public Scene getGameScene(Stage stage, Main m) {
 		Group root = new Group();
+		canvas.setOnKeyReleased(value -> {
+			if (value.getCode() == KeyCode.ESCAPE){
+				stage.setScene(m.getMenuScene(stage));
+			}
+		});
 		root.getChildren().add(canvas);
 		render();
 		Scene scene = new Scene(root);

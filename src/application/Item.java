@@ -40,7 +40,7 @@ public class Item implements Drawable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double sourceX, double sourceY) {
+	public void render(GraphicsContext gc, double offsetX, double offsetY) {
 		// TODO Auto-generated method stub
 		
 	}

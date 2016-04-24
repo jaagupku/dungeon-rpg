@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="5" height="6" tilewidth="48" tileheight="48" nextobjectid="23">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="5" height="6" tilewidth="48" tileheight="48" nextobjectid="25">
  <tileset firstgid="1" name="background" tilewidth="48" tileheight="48" tilecount="2">
   <image source="../tilesheet.png" width="96" height="48"/>
  </tileset>
@@ -37,7 +37,7 @@
    <tile gid="1"/>
    <tile gid="2"/>
    <tile gid="2"/>
-   <tile gid="2"/>
+   <tile gid="1"/>
    <tile gid="2"/>
    <tile gid="2"/>
    <tile gid="2"/>
@@ -53,5 +53,6 @@
   <object id="16" name="conn1" gid="11" x="0" y="144" width="48" height="48"/>
   <object id="17" name="conn2" gid="11" x="0" y="192" width="48" height="48"/>
   <object id="21" gid="10" x="96" y="96" width="48" height="48"/>
+  <object id="23" name="bigroom1" gid="11" x="48" y="288" width="48" height="48"/>
  </objectgroup>
 </map>

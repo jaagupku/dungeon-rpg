@@ -41,7 +41,7 @@ public class Fighter {
 	}
 
 	public void defendFromAttack(int dmg) {
-		if (rng.nextInt(getDefense() - 1) < dmg) {
+		if (rng.nextInt(getDefense()) < dmg) {
 			takeDamage(dmg);
 		} else {
 			System.out.println(getName() + " successfully blocked the attack.");

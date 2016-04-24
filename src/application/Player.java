@@ -19,8 +19,8 @@ public class Player extends Fighter implements Drawable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double sourceX, double sourceY) {
-		gc.drawImage(img, x * Game.tileSize + sourceX, y * Game.tileSize + sourceY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+		gc.drawImage(img, x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
 
 	}
 

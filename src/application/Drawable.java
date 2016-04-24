@@ -9,5 +9,5 @@ public interface Drawable {
 
 	//public void render(GraphicsContext gc);
 
-	public void render(GraphicsContext gc, double sourceX, double sourceY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY);
 }

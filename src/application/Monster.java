@@ -32,8 +32,15 @@ public class Monster extends Fighter implements Drawable {
 		this.y = y;
 
 	}
+	
+	private static void reset(){
+		names.clear();
+		stats.clear();
+		images.clear();
+	}
 
 	static void loadMonstersFromFile(File f) throws FileNotFoundException {
+		reset();
 		Scanner sc;
 		sc = new Scanner(f);
 		while (sc.hasNextLine()) {
@@ -60,8 +67,8 @@ public class Monster extends Fighter implements Drawable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double sourceX, double sourceY) {
-		gc.drawImage(img, x * Game.tileSize + sourceX, y * Game.tileSize + sourceY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+		gc.drawImage(img, x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
 	}
 
 	public void move(int dir) {

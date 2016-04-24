@@ -39,7 +39,6 @@ public class Room {
 		doc.getDocumentElement().normalize();
 		NodeList nList = doc.getDocumentElement().getChildNodes();
 		parseNodes(nList);
-
 	}
 
 	private void parseNodes(NodeList nList) {
@@ -127,7 +126,7 @@ public class Room {
 	}
 
 	public boolean isCellEmpty(int x, int y) {
-		if (x < 0 || x >= getSizeX() || y < 0 || y >= getSizeY()) {
+		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
 			// kaardist väljaspool olev rakk on tühi, siis kui see ühendab
 			// mingit teist ruumi
 			for (Connection c : connections) {
@@ -149,18 +148,18 @@ public class Room {
 		return true;
 	}
 
-	public void render(Canvas canvas, double sourceX, double sourceY) {
+	public void render(Canvas canvas, double offsetX, double offsetY) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		for (int y = 0; y < getSizeY(); y++) {
-			for (int x = 0; x < getSizeX(); x++) {
+		for (int y = 0; y < getHeight(); y++) {
+			for (int x = 0; x < getWidth(); x++) {
 				int cell = getCell(x, y);
-				gc.drawImage(tiles[cell - 1], x * Game.tileSize + sourceX, y * Game.tileSize + sourceY);
+				gc.drawImage(tiles[cell - 1], x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
 			}
 		}
 		List<Drawable> drawList = new ArrayList<Drawable>(items);
 		drawList.addAll(monsters);
 		for (Drawable d : drawList) {
-			d.render(gc, sourceX, sourceY);
+			d.render(gc, offsetX, offsetY);
 		}
 	}
 
@@ -185,11 +184,11 @@ public class Room {
 				List<Integer> freeDirections = getFreeDirections(m.getX(), m.getY());
 				if (m.getY() <= 0)
 					freeDirections.remove((Integer) World.NORTH);
-				else if (m.getY() >= getSizeY() - 1)
+				else if (m.getY() >= getHeight() - 1)
 					freeDirections.remove((Integer) World.SOUTH);
 				if (m.getX() <= 0)
 					freeDirections.remove((Integer) World.WEST);
-				else if (m.getX() >= getSizeX() - 1)
+				else if (m.getX() >= getWidth() - 1)
 					freeDirections.remove((Integer) World.EAST);
 				if (freeDirections.size() > 0)
 					m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
@@ -248,11 +247,11 @@ public class Room {
 		return map.getCell(x, y);
 	}
 
-	public int getSizeX() {
+	public int getWidth() {
 		return map.getSizeX();
 	}
 
-	public int getSizeY() {
+	public int getHeight() {
 		return map.getSizeY();
 	}
 
@@ -271,8 +270,8 @@ public class Room {
 	private void setEntranceX(int entranceX) {
 		if (entranceX < 0)
 			this.entranceX = 0;
-		else if (entranceX >= getSizeX())
-			this.entranceX = getSizeX() - 1;
+		else if (entranceX >= getWidth())
+			this.entranceX = getWidth() - 1;
 		else
 			this.entranceX = entranceX;
 	}
@@ -280,8 +279,8 @@ public class Room {
 	private void setEntranceY(int entranceY) {
 		if (entranceY < 0)
 			this.entranceY = 0;
-		else if (entranceY >= getSizeY())
-			this.entranceY = getSizeY() - 1;
+		else if (entranceY >= getHeight())
+			this.entranceY = getHeight() - 1;
 		else
 			this.entranceY = entranceY;
 	}
@@ -298,11 +297,11 @@ public class Room {
 			// väljapoole.
 			if (x == 0) {
 				x--;
-			} else if (x == getSizeX() - 1) {
+			} else if (x == getWidth() - 1) {
 				x++;
 			} else if (y == 0) {
 				y--;
-			} else if (y == getSizeY() - 1) {
+			} else if (y == getHeight() - 1) {
 				y++;
 			}
 			this.x = x;
@@ -332,7 +331,7 @@ public class Room {
 			// Tagastab koordinaadid, mis on kaardi sees.
 			if (x == -1) {
 				return x + 1;
-			} else if (x == getSizeX()) {
+			} else if (x == getWidth()) {
 				return x - 1;
 			}
 			return x;
@@ -342,7 +341,7 @@ public class Room {
 			// Tagastab koordinaadid, mis on kaardi sees.
 			if (y == -1) {
 				return y + 1;
-			} else if (y == getSizeY()) {
+			} else if (y == getHeight()) {
 				return y - 1;
 			}
 			return y;

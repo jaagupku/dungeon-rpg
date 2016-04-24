@@ -21,7 +21,7 @@ public class Main extends Application {
 
 	protected static int windowWidth = 800, windowHeight = 600;
 
-	private Scene getMenuScene(Stage stage) {
+	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
 		VBox menuButtons = new VBox();
 		menuButtons.setSpacing(10);
@@ -36,9 +36,9 @@ public class Main extends Application {
 			try {
 				game = new Game();
 			} catch (ParserConfigurationException | SAXException | IOException e) {
-				throw new RuntimeException();
+				throw new RuntimeException(e.getMessage());
 			}
-			stage.setScene(game.getGameScene(stage));
+			stage.setScene(game.getGameScene(stage, this));
 		});
 		menuButtons.getChildren().add(newGame);
 

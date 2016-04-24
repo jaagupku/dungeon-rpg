@@ -25,15 +25,15 @@ public class World {
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
 		// "room<number>.txt"
-		/*while (true) {
-			f = new File("resources\\rooms\\room" + counter + ".txt");
+		while (true) {
+			f = new File("resources\\rooms\\test" + counter + ".tmx");
 			if (!f.exists())
 				break;
 			rooms.add(new Room(f));
 			counter++;
-		}*/
-		rooms.add(new Room(new File("resources\\rooms\\test.tmx")));
-		rooms.add(new Room(new File("resources\\rooms\\test1.tmx")));
+		}
+		if (rooms.size() == 0)
+			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
 	}
@@ -66,18 +66,38 @@ public class World {
 		Monster m = currentRoom.getMonsterAt(x, y);
 		if (m != null) {
 			player.addXp(player.attackOther(m));
-		} else {
-			System.out.println("You swing your sword in empty air.\nIt was pointless.");
 		}
 	}
 
 	public void render(Canvas canvas) {
-		double sourceX, sourceY;
-		sourceX = canvas.getWidth()/2 - currentRoom.getSizeX()*Game.tileSize/2;
-		sourceY = canvas.getHeight()/2 - currentRoom.getSizeY()*Game.tileSize/2;
-		currentRoom.render(canvas, sourceX, sourceY);
+		double offsetX, offsetY;
+		double midX = canvas.getWidth() / 2, 
+			   midY = canvas.getHeight() / 2;
+		
+		if (currentRoom.getWidth() * Game.tileSize > canvas.getWidth()) {
+			offsetX = player.getX() * Game.tileSize - midX;
+			if (offsetX < 0)
+				offsetX = 0;
+			else if (offsetX > currentRoom.getWidth()*Game.tileSize - canvas.getWidth()){
+				offsetX = currentRoom.getWidth()*Game.tileSize - canvas.getWidth();
+			}
+		} else {
+			offsetX = currentRoom.getWidth() * Game.tileSize / 2 - canvas.getWidth() / 2;
+		}
+
+		if (currentRoom.getHeight() * Game.tileSize > canvas.getHeight()) {
+			offsetY = player.getY() * Game.tileSize - midY;
+			if (offsetY < 0)
+				offsetY = 0;
+			else if (offsetY > currentRoom.getHeight()*Game.tileSize - canvas.getHeight()){
+				offsetY = currentRoom.getHeight()*Game.tileSize - canvas.getHeight();
+			}
+		} else {
+			offsetY = currentRoom.getHeight() * Game.tileSize / 2 - canvas.getHeight() / 2;
+		}
+		currentRoom.render(canvas, offsetX, offsetY);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		player.render(gc, sourceX, sourceY);
+		player.render(gc, offsetX, offsetY);
 	}
 
 	public void monsterTurn() {
@@ -89,10 +109,10 @@ public class World {
 		if (currentRoom.getFreeDirections(player.getX(), player.getY()).contains(dir)) {
 			player.move(dir);
 		} else {
-			System.out.println("You can't walk there.");
+			playerAttack(dir);
 		}
-		if (player.getX() < 0 || player.getX() >= currentRoom.getSizeX() || player.getY() < 0
-				|| player.getY() >= currentRoom.getSizeY()) {
+		if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
+				|| player.getY() >= currentRoom.getHeight()) {
 			// Kui mängija liikus kaardist välja, siis see tähendab, et ta peab
 			// minema uute ruumi
 			// Leiame selle ja vahetame ruumid ära.
