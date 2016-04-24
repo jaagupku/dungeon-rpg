@@ -30,6 +30,7 @@ Make sure that `Tile Layer Format is XML`
 Change "Tile Layer 1" to "background". This will be background.
 
 ![Change "Tile Layer 1" to "background"](http://i.imgur.com/8cnz6uS.png "Change "Tile Layer 1" to "background"")
+
 Add 2 more object layers. `Layer -> Add Object Layer`. Name them "monsters" and "map_data". Monser layer will hold monsters and map_data holds connections between rooms and player spawn point.
 
 ![3 layers](http://i.imgur.com/w0rMh8T.png "All 3 layers")
