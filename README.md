@@ -23,9 +23,9 @@ First let's create new map. `File -> New...`
 Then let's set Tile layer format.
 `Map -> Map Properties`
 
-Make sure that `Tile Layer Format is CSV`
+Make sure that `Tile Layer Format is XML`
 
-![Tile Layer Format](http://i.imgur.com/NxuTfSq.png "Tile Layer Format is CSV")
+![Tile Layer Format](http://i.imgur.com/MLGBO85.png "Tile Layer Format is XML")
 
 ### Layers
 Change "Tile Layer 1" to "background". This will be background.
