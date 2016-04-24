@@ -2,6 +2,11 @@ package application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -15,9 +20,9 @@ import javafx.stage.Stage;
 public class Game {
 	private World world;
 	private Canvas canvas;
-	public static final int TILE_SIZE = 48;
+	public static int tileSize = 48;
 
-	public Game() throws FileNotFoundException {
+	public Game() throws ParserConfigurationException, SAXException, IOException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
 		canvas.setFocusTraversable(true);
 		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {

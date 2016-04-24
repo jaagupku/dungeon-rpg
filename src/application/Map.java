@@ -1,18 +1,15 @@
 package application;
 
-import java.util.Random;
-
 public class Map {
-	public static final int WALL = 1, EMPTY = 0, DOOR = 2; // Map tiles
+	public static final int WALL = 2; // Collision tile GID;
 	private int[][] cells;
 	private int sizeX, sizeY;
-	private Random rng = new Random();
 
 	public Map(int sizeX, int sizeY) {
 		this.sizeX = (sizeX > 3 ? sizeX : 3);
 		this.sizeY = (sizeY > 3 ? sizeY : 3);
 		this.cells = new int[this.sizeY][this.sizeX];
-		fillWorldRandom();
+		// fillWorldRandom();
 	}
 
 	public void changeMapTile(int x, int y, int tile) {
@@ -27,20 +24,12 @@ public class Map {
 		}
 	}
 
-	private void fillWorldRandom() {
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
-				if (x == 0 || x == sizeX - 1 || y == 0 || y == sizeY - 1) {
-					changeMapTile(x, y, WALL);
-				} else {
-					if (rng.nextInt(4) == 0)
-						changeMapTile(x, y, WALL);
-					else
-						changeMapTile(x, y, EMPTY);
-				}
-			}
-		}
-	}
+	/*
+	 * private void fillWorldRandom() { for (int x = 0; x < sizeX; x++) { for
+	 * (int y = 0; y < sizeY; y++) { if (x == 0 || x == sizeX - 1 || y == 0 || y
+	 * == sizeY - 1) { changeMapTile(x, y, WALL); } else { if (rng.nextInt(4) ==
+	 * 0) changeMapTile(x, y, WALL); else changeMapTile(x, y, EMPTY); } } } }
+	 */
 
 	public int getCell(int x, int y) {
 		return cells[y][x];

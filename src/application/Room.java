@@ -1,75 +1,127 @@
 package application;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 
 public class Room {
-	private List<Monster> monsters = new ArrayList<Monster>();
-	private List<Item> items = new ArrayList<Item>();
-	private List<Connection> connections = new ArrayList<Connection>();
+	private List<Monster> monsters;
+	private List<Item> items;
+	private List<Connection> connections;
 	private int entranceX, entranceY;
 	private Map map;
 	private Random rng = new Random();
-	private Image wall, ground;
+	private Image[] tiles;
 
-	public Room(File file) throws FileNotFoundException {
-		StringBuilder sb = new StringBuilder();
-		Scanner input = new Scanner(file);
-		wall = new Image("wall.png");
-		ground = new Image("ground.png");
-		while (input.hasNextLine()) {
-			String line = input.nextLine();
-			// Loeb kogu faili ühte pikka sõnesse.
-			// Kui rida failis ei alga // siis see rida läheb pikka sõnesse.
-			if (!line.startsWith("//"))
-				sb.append(line);
-		}
-		input.close();
-		// Teeb pikast stringist käskude kaupa sõne massiivi.
-		String[] mapLines = sb.toString().split(";");
-		for (String st : mapLines) {
-			// Jagab käsu kaheks. command[0] on käsu nimi ja command[1] selle
-			// väärtus
-			String[] command = st.split("=");
-			// kontrollib käsud läbi
-			if (command[0].equalsIgnoreCase("map_size")) {
-				// Kaardi suurusel on kaks väärtus, x ja y
-				String[] values = command[1].split(","); // eraldab need
-				// Loob uue kaardi vajalike suurustega
-				map = new Map(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
-			} else if (command[0].equalsIgnoreCase("map_tiles")) {
-				// map_tiles täidab kaardi vastavate väärtustega
-				StringBuilder sb1 = new StringBuilder(command[1]);
-				while (sb1.indexOf("$") != -1) { // loob ruumide vahel
-													// ühendused.
-					int startPos = sb1.indexOf("$");
-					int endPos = sb1.indexOf("$", startPos + 1);
-					// kahe $ vahel on ühenduse nimi. Luuakse uus ühendus.
-					connections.add(new Connection(sb1.substring(startPos + 1, endPos), startPos));
-					// $nimi$ asendatakse tühja rakuga.
-					sb1.replace(startPos, endPos + 1, "0");
+	public Room(File file) throws ParserConfigurationException, SAXException, IOException {
+		monsters = new ArrayList<Monster>();
+		items = new ArrayList<Item>();
+		connections = new ArrayList<Connection>();
+		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = dBuilder.parse(file);
+		doc.getDocumentElement().normalize();
+		NodeList nList = doc.getDocumentElement().getChildNodes();
+		parseNodes(nList);
+
+	}
+
+	private void parseNodes(NodeList nList) {
+		int firstObjGid = 0, firstConnectionGid = 0;
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) node;
+				if (node.getNodeName().equals("tileset")) {
+					if (element.getAttribute("name").equals("background")) {
+						Game.tileSize = Integer.parseInt(element.getAttribute("tilewidth"));
+						tiles = new Image[Integer.parseInt(element.getAttribute("tilecount"))];
+						Element tileSheetElement = (Element) node.getChildNodes().item(1);
+						Image sheetImg = new Image(tileSheetElement.getAttribute("source").replace("../", ""));
+						int sheetSizeX = (int) (sheetImg.getWidth() / Game.tileSize);
+						for (int tileCounter = 0; tileCounter < tiles.length; tileCounter++) {
+							int x = (tileCounter % sheetSizeX) * Game.tileSize;
+							int y = (tileCounter / sheetSizeX) * Game.tileSize;
+							WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize,
+									Game.tileSize);
+							tiles[tileCounter] = (Image) wi;
+						}
+					} else if (element.getAttribute("name").equals("objects_sheet")) {
+						firstObjGid = Integer.parseInt(element.getAttribute("firstgid"));
+					} else if (element.getAttribute("name").equals("markers")) {
+						firstConnectionGid = Integer.parseInt(element.getAttribute("firstgid"));
+					}
+				} else if (node.getNodeName().equals("layer")) {
+					if (element.getAttribute("name").equals("background")) {
+						int width = Integer.parseInt(element.getAttribute("width"));
+						int height = Integer.parseInt(element.getAttribute("height"));
+						map = new Map(width, height);
+						NodeList data = node.getChildNodes().item(1).getChildNodes();
+						int counter = 0;
+						for (int tile = 0; tile < data.getLength(); tile++) {
+							if (data.item(tile).getNodeType() != Node.ELEMENT_NODE)
+								continue;
+							int x = counter % width;
+							int y = counter / width;
+							counter++;
+							map.changeMapTile(x, y, Integer.parseInt(((Element) data.item(tile)).getAttribute("gid")));
+						}
+					}
+				} else if (node.getNodeName().equals("objectgroup")) {
+					if (element.getAttribute("name").equals("map_data")) {
+						NodeList objects = node.getChildNodes();
+						for (int obj = 0; obj < objects.getLength(); obj++) {
+							if (objects.item(obj).getNodeType() != Node.ELEMENT_NODE)
+								continue;
+							if (Integer.parseInt(
+									((Element) objects.item(obj)).getAttribute("gid")) == firstConnectionGid + 1) {
+								int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
+										/ Game.tileSize;
+								int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
+										/ Game.tileSize - 1;
+								setEntranceX(x);
+								setEntranceY(y);
+							} else if (Integer.parseInt(
+									((Element) objects.item(obj)).getAttribute("gid")) == firstConnectionGid) {
+
+								String connectionName = ((Element) objects.item(obj)).getAttribute("name");
+								int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
+										/ Game.tileSize;
+								int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
+										/ Game.tileSize - 1;
+								connections.add(new Connection(connectionName, x, y));
+							}
+						}
+					} else if (element.getAttribute("name").equals("monsters")) {
+						NodeList objects = node.getChildNodes();
+						for (int obj = 0; obj < objects.getLength(); obj++) {
+							if (objects.item(obj).getNodeType() != Node.ELEMENT_NODE)
+								continue;
+							int id = Integer.parseInt(((Element) objects.item(obj)).getAttribute("gid"))-firstObjGid;
+							int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
+									/ Game.tileSize;
+							int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
+									/ Game.tileSize - 1;
+							monsters.add(new Monster(x, y, id));
+						}
+					}
 				}
-				map.loadMapFromCharArray(sb1.toString().toCharArray());
-			} else if (command[0].equalsIgnoreCase("player_spawn")) {
-				// player_spawn on vajalik ainult esimesel ruumil, ehk room0.txt
-				// teistel vahet ei ole.
-				String[] values = command[1].split(",");
-				entranceX = Integer.parseInt(values[0]);
-				entranceY = Integer.parseInt(values[1]);
-			} else if (command[0].equalsIgnoreCase("add_monster")) {
-				// add_monster lisab koletisi ruumi.
-				// add_monster=x,y,koletiseID;
-				String[] values = command[1].split(",");
-				monsters.add(new Monster(Integer.parseInt(values[0]), Integer.parseInt(values[1]),
-						Integer.parseInt(values[2])));
 			}
 		}
 	}
@@ -102,11 +154,7 @@ public class Room {
 		for (int y = 0; y < getSizeY(); y++) {
 			for (int x = 0; x < getSizeX(); x++) {
 				int cell = getCell(x, y);
-				if (cell == Map.WALL) {
-					gc.drawImage(wall, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
-				} else if (cell == Map.EMPTY) {
-					gc.drawImage(ground, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
-				}
+				gc.drawImage(tiles[cell - 1], x * Game.tileSize + sourceX, y * Game.tileSize + sourceY);
 			}
 		}
 		List<Drawable> drawList = new ArrayList<Drawable>(items);
@@ -162,10 +210,6 @@ public class Room {
 		if (isCellEmpty(x + 1, y))
 			freeDirections.add(World.EAST);
 		return freeDirections;
-	}
-
-	private int getStartPos(int x, int y) {
-		return x * 2 + (2 * getSizeX() + 1) * y;
 	}
 
 	public Room getNextRoom(int x, int y, List<Room> others) {
@@ -247,13 +291,9 @@ public class Room {
 		private String name;
 		private int x, y;
 
-		public Connection(String name, int position) {
+		public Connection(String name, int x, int y) {
 			super();
 			this.name = name;
-			// Leiame koordinaadid x ja y, sest position on ühenduse asukoht
-			// sisseloetud sõnes.
-			x = position % getSizeX();
-			y = (position - x) / getSizeX();
 			// Kui ühendus on kaardi ääres, siis liigutame tema kaardist
 			// väljapoole.
 			if (x == 0) {
@@ -265,6 +305,8 @@ public class Room {
 			} else if (y == getSizeY() - 1) {
 				y++;
 			}
+			this.x = x;
+			this.y = y;
 		}
 
 		public boolean coordinatesEquals(int x, int y) {

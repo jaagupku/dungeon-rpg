@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 
 public class Monster extends Fighter implements Drawable {
 	private int x, y;
@@ -19,13 +20,14 @@ public class Monster extends Fighter implements Drawable {
 	// monsterStats'il on {max elud, attack power, attack accuracy, defense,
 	// agility}
 
-	private static List<String[]> names = new ArrayList<String[]>();
+	private static List<String> names = new ArrayList<String>();
 	private static List<int[]> stats = new ArrayList<int[]>();
+	private static List<Image> images = new ArrayList<Image>();
 
 	public Monster(int x, int y, int id) {
-		super(names.get(id)[0], stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3],
+		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3],
 				stats.get(id)[4]);
-		img = new Image("player.png");
+		this.img = images.get(id);
 		this.x = x;
 		this.y = y;
 
@@ -39,19 +41,27 @@ public class Monster extends Fighter implements Drawable {
 			if (line.startsWith("//") || line.length() < 14)
 				continue;
 			String[] data = line.split(",");
-			String[] name = { data[0], data[1] };
-			names.add(name);
+			names.add(data[0]);
 			int[] stat = { Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]),
 					Integer.parseInt(data[5]), Integer.parseInt(data[6]) };
 			stats.add(stat);
 		}
 		sc.close();
+		Image sheetImg = new Image("objects_sheet.png");
+		int sheetSizeX = (int) (sheetImg.getWidth() / Game.tileSize);
+		for (int tileCounter = 0; tileCounter < names.size(); tileCounter++) {
+			int x = (tileCounter % sheetSizeX) * Game.tileSize;
+			int y = (tileCounter / sheetSizeX) * Game.tileSize;
+			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize,
+					Game.tileSize);
+			images.add((Image) wi);
+		}
 
 	}
 
 	@Override
 	public void render(GraphicsContext gc, double sourceX, double sourceY) {
-		gc.drawImage(img, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
+		gc.drawImage(img, x * Game.tileSize + sourceX, y * Game.tileSize + sourceY);
 	}
 
 	public void move(int dir) {

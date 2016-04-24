@@ -2,8 +2,13 @@ package application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,18 +20,20 @@ public class World {
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
 
-	public World() throws FileNotFoundException {
+	public World() throws ParserConfigurationException, SAXException, IOException {
 		int counter = 0;
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
 		// "room<number>.txt"
-		while (true) {
+		/*while (true) {
 			f = new File("resources\\rooms\\room" + counter + ".txt");
 			if (!f.exists())
 				break;
 			rooms.add(new Room(f));
 			counter++;
-		}
+		}*/
+		rooms.add(new Room(new File("resources\\rooms\\test.tmx")));
+		rooms.add(new Room(new File("resources\\rooms\\test1.tmx")));
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
 	}
@@ -66,8 +73,8 @@ public class World {
 
 	public void render(Canvas canvas) {
 		double sourceX, sourceY;
-		sourceX = canvas.getWidth()/2 - currentRoom.getSizeX()*Game.TILE_SIZE/2;
-		sourceY = canvas.getHeight()/2 - currentRoom.getSizeY()*Game.TILE_SIZE/2;
+		sourceX = canvas.getWidth()/2 - currentRoom.getSizeX()*Game.tileSize/2;
+		sourceY = canvas.getHeight()/2 - currentRoom.getSizeY()*Game.tileSize/2;
 		currentRoom.render(canvas, sourceX, sourceY);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		player.render(gc, sourceX, sourceY);

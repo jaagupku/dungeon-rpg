@@ -1,6 +1,11 @@
 package application;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,7 +35,7 @@ public class Main extends Application {
 			Game game;
 			try {
 				game = new Game();
-			} catch (FileNotFoundException e) {
+			} catch (ParserConfigurationException | SAXException | IOException e) {
 				throw new RuntimeException();
 			}
 			stage.setScene(game.getGameScene(stage));
