@@ -95,3 +95,8 @@ To create more rooms follow previous steps. New rooms do not need "player spawn"
 Example room1.tmx, which is connected to room0.tmx
 
 ![Example room1.tmx](http://i.imgur.com/2wTYZTw.png "Example room1.tmx")
+
+How these rooms look in early game build.
+
+![Example in early game build](http://i.imgur.com/WBXeEF4.gifv "Example in early game build")
+
