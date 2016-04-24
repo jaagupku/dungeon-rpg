@@ -15,8 +15,8 @@ First let's create new map. `File -> New...`
 * Tile render order: Right Down
 * Map size: choose it yourself
 * Tile size
-..* Width: 48px
-..* Height: 48px
+⋅⋅* Width: 48px
+⋅⋅* Height: 48px
 
 Hit `Ok`
 
