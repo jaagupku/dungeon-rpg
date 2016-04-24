@@ -11,14 +11,14 @@ First let's create new map. `File -> New...`
 
 ![New Map - Tiled](http://i.imgur.com/gMGdWtx.png "New Map - Tiled")
 * Orientation: Orthogonal
-* Tile layer format: CSV
+* Tile layer format: CSV - Later we will change it to XML
 * Tile render order: Right Down
 * Map size: choose it yourself
 * Tile size
 ..* Width: 48px
 ..* Height: 48px
 
-`Ok`
+Hit `Ok`
 
 Then let's set Tile layer format.
 `Map -> Map Properties`
