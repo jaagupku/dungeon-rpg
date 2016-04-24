@@ -17,15 +17,19 @@ First let's create new map. `File -> New...`
 * Tile size
 ..* Width: 48px
 ..* Height: 48px
+
 `Ok`
+
 Then let's set Tile layer format.
 `Map -> Map Properties`
+
 Make sure that `Tile Layer Format is CSV`
 
 ![Tile Layer Format](http://i.imgur.com/NxuTfSq.png "Tile Layer Format is CSV")
 
 ### Layers
 Change "Tile Layer 1" to "background". This will be background.
+
 ![Change "Tile Layer 1" to "background"](http://i.imgur.com/8cnz6uS.png "Change "Tile Layer 1" to "background"")
 Add 2 more object layers. `Layer -> Add Object Layer`. Name them "monsters" and "map_data". Monser layer will hold monsters and map_data holds connections between rooms and player spawn point.
 
@@ -35,9 +39,11 @@ Add 2 more object layers. `Layer -> Add Object Layer`. Name them "monsters" and 
 Let's now add tilesets. `Map -> New Tileset...`
 
 ![New Tileset](http://i.imgur.com/q4MadH9.png "Map -> New Tileset...")
+
 For background tiles e.g. walls, ground, we want tileset name to be "background"
 
 ![Name: background](http://i.imgur.com/JFcRT4K.png "Name: background")
+
 Do the same for "objects_sheet.png" and "markers.png"
 
 ![Tilesets](http://i.imgur.com/iHbTloO.png "All tilesets")
@@ -51,6 +57,7 @@ Let's get started. First make sure you have selected "background" layer, then se
 
 #### Adding Monsters
 Make sure you have enabled objects snapping to grid. `View -> Snap to Grid`
+
 Select "monsters" layer and choose tile from "objects_sheet" tilesheet.
 Choose "Insert tile (T)" tool from toolbar.
 
@@ -62,13 +69,13 @@ With "Select objects (S)" tool you can move and edit objects.
 #### Adding Map Data
 
 When adding map data, make sure you have selected "map_data" layer.
-This is player spawn.
 
+This is player spawn.
 ![Player spawn](http://i.imgur.com/g5bC0P6.png "Put it only in room0")
+
 NB! Put it only in room0.tmx
 
 This is connection.
-
 ![Connection](http://i.imgur.com/An7y0AK.png "Connection")
 Connections are in pairs. Each pair must be unique. See following images to see connecions in example rooms.
 
@@ -78,6 +85,7 @@ Connections are in pairs. Each pair must be unique. See following images to see 
 `File -> Save As...` Naming rooms starts from 0. Room0 will be the room where player starts the game. After that numbering rooms is irrelevant. Only requirement is that there aren't any gaps in numbering.
 
 ![Saving](http://i.imgur.com/0nGI6sL.png "Saving the room.")
+
 Finished room0.tmx
 
 ![Finished room0.tmx](http://i.imgur.com/5ZCEh5G.png "Finished room0.tmx")
