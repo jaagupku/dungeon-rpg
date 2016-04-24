@@ -14,9 +14,8 @@ First let's create new map. `File -> New...`
 * Tile layer format: CSV - Later we will change it to XML
 * Tile render order: Right Down
 * Map size: choose it yourself
-* Tile size
-⋅⋅+ Width: 48px
-⋅⋅+ Height: 48px
+* Tile size : 
+Width - 48px, Height - 48px
 
 Hit `Ok`
 
