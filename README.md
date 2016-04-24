@@ -98,5 +98,5 @@ Example room1.tmx, which is connected to room0.tmx
 
 How these rooms look in early game build.
 
-![Example in early game build](http://i.imgur.com/WBXeEF4.gifv "Example in early game build")
+![Example in early game build](http://i.imgur.com/WBXeEF4.gif "Example in early game build")
 
