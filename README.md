@@ -60,9 +60,11 @@ Make sure you have enabled objects snapping to grid. `View -> Snap to Grid`
 
 Select "monsters" layer and choose tile from "objects_sheet" tilesheet.
 Choose "Insert tile (T)" tool from toolbar.
-
 ![Insert tile](http://i.imgur.com/YbTkjjy.png "Insert tile (T)")
+
 With "Select objects (S)" tool you can move and edit objects.
+![Select objects (S)](http://i.imgur.com/GPRjCv1.png "Select objects (S)")
+
 
 ![Insert tile](http://i.imgur.com/r5ssod9.png "Example map with monsters")
 
