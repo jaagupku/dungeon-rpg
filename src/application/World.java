@@ -26,7 +26,7 @@ public class World {
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
 		// "room<number>.txt"
 		while (true) {
-			f = new File("resources\\rooms\\test" + counter + ".tmx");
+			f = new File("resources\\rooms\\room" + counter + ".tmx");
 			if (!f.exists())
 				break;
 			rooms.add(new Room(f));
