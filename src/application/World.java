@@ -65,9 +65,12 @@ public class World {
 	}
 
 	public void render(Canvas canvas) {
-		currentRoom.render(canvas);
+		double sourceX, sourceY;
+		sourceX = canvas.getWidth()/2 - currentRoom.getSizeX()*Game.TILE_SIZE/2;
+		sourceY = canvas.getHeight()/2 - currentRoom.getSizeY()*Game.TILE_SIZE/2;
+		currentRoom.render(canvas, sourceX, sourceY);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		player.render(gc);
+		player.render(gc, sourceX, sourceY);
 	}
 
 	public void monsterTurn() {

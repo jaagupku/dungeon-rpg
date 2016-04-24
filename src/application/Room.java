@@ -97,22 +97,22 @@ public class Room {
 		return true;
 	}
 
-	public void render(Canvas canvas) {
+	public void render(Canvas canvas, double sourceX, double sourceY) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		for (int y = 0; y < getSizeY(); y++) {
 			for (int x = 0; x < getSizeX(); x++) {
 				int cell = getCell(x, y);
 				if (cell == Map.WALL) {
-					gc.drawImage(wall, x * Game.TILE_SIZE, y * Game.TILE_SIZE);
+					gc.drawImage(wall, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
 				} else if (cell == Map.EMPTY) {
-					gc.drawImage(ground, x * Game.TILE_SIZE, y * Game.TILE_SIZE);
+					gc.drawImage(ground, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
 				}
 			}
 		}
 		List<Drawable> drawList = new ArrayList<Drawable>(items);
 		drawList.addAll(monsters);
 		for (Drawable d : drawList) {
-			d.render(gc);
+			d.render(gc, sourceX, sourceY);
 		}
 	}
 

@@ -50,8 +50,8 @@ public class Monster extends Fighter implements Drawable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc) {
-		gc.drawImage(img, x * Game.TILE_SIZE, y * Game.TILE_SIZE);
+	public void render(GraphicsContext gc, double sourceX, double sourceY) {
+		gc.drawImage(img, x * Game.TILE_SIZE + sourceX, y * Game.TILE_SIZE + sourceY);
 	}
 
 	public void move(int dir) {
