@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
-public class Monster extends Fighter implements Renderable {
-	private int x, y;
+public class Monster extends Fighter implements Renderable, Movable {
+	private DoubleProperty x, y;
+	private int destinationX, destinationY;
 	private Image img;
 	// monsterStrings ja monsterStats on kahedimensioonilised massiivid.
 	// monster______[id][tunnus]
@@ -26,15 +29,16 @@ public class Monster extends Fighter implements Renderable {
 	public static List<String> codeNames = new ArrayList<String>();
 
 	public Monster(int x, int y, int id) {
-		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3],
-				stats.get(id)[4]);
+		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3], stats.get(id)[4]);
 		this.img = images.get(id);
-		this.x = x;
-		this.y = y;
+		this.x = new SimpleDoubleProperty(x);
+		this.y = new SimpleDoubleProperty(y);
+		setX(x);
+		setY(y);
 
 	}
-	
-	private static void reset(){
+
+	private static void reset() {
 		names.clear();
 		stats.clear();
 		images.clear();
@@ -61,8 +65,7 @@ public class Monster extends Fighter implements Renderable {
 		for (int tileCounter = 0; tileCounter < names.size(); tileCounter++) {
 			int x = (tileCounter % sheetSizeX) * Game.tileSize;
 			int y = (tileCounter / sheetSizeX) * Game.tileSize;
-			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize,
-					Game.tileSize);
+			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize, Game.tileSize);
 			images.add((Image) wi);
 		}
 
@@ -70,43 +73,79 @@ public class Monster extends Fighter implements Renderable {
 
 	@Override
 	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(img, x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
+		gc.drawImage(img, getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
 	}
 
-	public void move(int dir) {
+	@Override
+	public double[] move(int dir) {
+		double newX = getX(), newY = getY();
 		switch (dir) {
 		case World.NORTH: {
-			setY(getY() - 1);
+			newY = getY() - 1;
 			break;
 		}
 		case World.SOUTH: {
-			setY(getY() + 1);
+			newY = getY() + 1;
 			break;
 		}
 		case World.WEST: {
-			setX(getX() - 1);
+			newX = getX() - 1;
 			break;
 		}
 		case World.EAST: {
-			setX(getX() + 1);
+			newX = getX() + 1;
 			break;
 		}
 		}
+		return new double[] { newX, newY };
 	}
 
-	public int getX() {
+	@Override
+	public double getX() {
+		return x.doubleValue();
+	}
+
+	@Override
+	public double getY() {
+		return y.doubleValue();
+	}
+
+	@Override
+	public final DoubleProperty xProperty() {
 		return x;
 	}
 
-	public int getY() {
+	@Override
+	public final DoubleProperty yProperty() {
 		return y;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	@Override
+	public void setX(double x) {
+		destinationX = (int) x;
+		this.x.set(x);
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	@Override
+	public void setY(double y) {
+		destinationY = (int) y;
+		this.y.set(y);
 	}
+
+	public int getDestinationX() {
+		return destinationX;
+	}
+
+	public int getDestinationY() {
+		return destinationY;
+	}
+
+	public void setDestinationX(int destinationX) {
+		this.destinationX = destinationX;
+	}
+
+	public void setDestinationY(int destinationY) {
+		this.destinationY = destinationY;
+	}
+
 }

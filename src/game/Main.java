@@ -1,6 +1,5 @@
 package game;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -76,8 +75,10 @@ public class Main extends Application {
 	private Scene getDefaultScene(Stage stage, Parent root) {
 		Scene scene = new Scene(root, windowWidth, windowHeight);
 		root.setId("pane");
-		//scene.heightProperty().addListener((ov, oldValue, newValue) -> windowHeight = newValue.intValue());
-		//scene.widthProperty().addListener((ov, oldValue, newValue) -> windowWidth = newValue.intValue());
+		// scene.heightProperty().addListener((ov, oldValue, newValue) ->
+		// windowHeight = newValue.intValue());
+		// scene.widthProperty().addListener((ov, oldValue, newValue) ->
+		// windowWidth = newValue.intValue());
 		scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
 		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + windowWidth
 				+ "px " + windowHeight + "px;");

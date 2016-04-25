@@ -1,64 +1,94 @@
 package game;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Player extends Fighter implements Renderable {
-	private int x, y;
+public class Player extends Fighter implements Renderable, Movable {
+	private DoubleProperty x, y;
 	private int xp, level;
-	private final char SWORD = 'i', MAN = '\u263A';
 	private Image img;
+	private boolean hasTurn;
 
 	public Player(int x, int y, int maxHealth) {
 		super("Player", maxHealth, 10, 7, 3, 3);
-		this.x = x;
-		this.y = y;
+		this.x = new SimpleDoubleProperty(x);
+		this.y = new SimpleDoubleProperty(y);
 		level = 1;
 		xp = 0;
 		img = new Image("player.png");
+		hasTurn = true;
 	}
 
 	@Override
 	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(img, x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
+		gc.drawImage(img, getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
 
 	}
 
-	public void move(int dir) {
+	@Override
+	public double[] move(int dir) {
+		double newX = getX(), newY = getY();
 		switch (dir) {
 		case World.NORTH: {
-			setY(getY() - 1);
+			newY = getY() - 1;
 			break;
 		}
 		case World.SOUTH: {
-			setY(getY() + 1);
+			newY = getY() + 1;
 			break;
 		}
 		case World.WEST: {
-			setX(getX() - 1);
+			newX = getX() - 1;
 			break;
 		}
 		case World.EAST: {
-			setX(getX() + 1);
+			newX = getX() + 1;
 			break;
 		}
 		}
+		return new double[]{newX, newY};
+	}
+	
+	public void setTurn(boolean b){
+		hasTurn = b;
+	}
+	
+	public boolean hasTurn(){
+		return hasTurn;
 	}
 
-	public int getX() {
+	@Override
+	public double getX() {
+		return x.doubleValue();
+	}
+
+	@Override
+	public double getY() {
+		return y.doubleValue();
+	}
+
+	@Override
+	public final DoubleProperty xProperty() {
 		return x;
 	}
 
-	public int getY() {
+	@Override
+	public final DoubleProperty yProperty() {
 		return y;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	@Override
+	public void setX(double x) {
+		this.x.set(x);
+		;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	@Override
+	public void setY(double y) {
+		this.y.set(y);
+		;
 	}
 
 	public void addXp(int xp) {

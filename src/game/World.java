@@ -10,8 +10,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.util.Duration;
 import tilemap.TiledMapEncodingException;
 
 public class World {
@@ -20,6 +24,7 @@ public class World {
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
+	private Timeline timeline;
 
 	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
@@ -37,6 +42,7 @@ public class World {
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
+		timeline = new Timeline();
 	}
 
 	public void playerAttack(int dir) {
@@ -44,23 +50,23 @@ public class World {
 		int y = 0;
 		switch (dir) {
 		case World.NORTH: {
-			x = player.getX();
-			y = player.getY() - 1;
+			x = (int) player.getX();
+			y = (int) (player.getY() - 1);
 			break;
 		}
 		case World.SOUTH: {
-			x = player.getX();
-			y = player.getY() + 1;
+			x = (int) player.getX();
+			y = (int) (player.getY() + 1);
 			break;
 		}
 		case World.WEST: {
-			x = player.getX() - 1;
-			y = player.getY();
+			x = (int) (player.getX() - 1);
+			y = (int) player.getY();
 			break;
 		}
 		case World.EAST: {
-			x = player.getX() + 1;
-			y = player.getY();
+			x = (int) (player.getX() + 1);
+			y = (int) player.getY();
 			break;
 		}
 		}
@@ -76,17 +82,16 @@ public class World {
 		currentRoom.render(gc, offset[0], offset[1]);
 		player.render(gc, offset[0], offset[1]);
 	}
-	
-	private double[] getOffset(double screenWidth, double screenHeight){
+
+	private double[] getOffset(double screenWidth, double screenHeight) {
 		double offsetX, offsetY;
-		double midX = screenWidth / 2, 
-				   midY = screenHeight / 2;
+		double midX = screenWidth / 2, midY = screenHeight / 2;
 		if (currentRoom.getWidth() * Game.tileSize > screenWidth) {
 			offsetX = player.getX() * Game.tileSize - midX;
 			if (offsetX < 0)
 				offsetX = 0;
-			else if (offsetX > currentRoom.getWidth()*Game.tileSize - screenWidth){
-				offsetX = currentRoom.getWidth()*Game.tileSize - screenWidth;
+			else if (offsetX > currentRoom.getWidth() * Game.tileSize - screenWidth) {
+				offsetX = currentRoom.getWidth() * Game.tileSize - screenWidth;
 			}
 		} else {
 			offsetX = currentRoom.getWidth() * Game.tileSize / 2 - screenWidth / 2;
@@ -96,13 +101,13 @@ public class World {
 			offsetY = player.getY() * Game.tileSize - midY;
 			if (offsetY < 0)
 				offsetY = 0;
-			else if (offsetY > currentRoom.getHeight()*Game.tileSize - screenHeight){
-				offsetY = currentRoom.getHeight()*Game.tileSize - screenHeight;
+			else if (offsetY > currentRoom.getHeight() * Game.tileSize - screenHeight) {
+				offsetY = currentRoom.getHeight() * Game.tileSize - screenHeight;
 			}
 		} else {
 			offsetY = currentRoom.getHeight() * Game.tileSize / 2 - screenHeight / 2;
 		}
-		return new double[]{offsetX, offsetY};
+		return new double[] { offsetX, offsetY };
 	}
 
 	public void monsterTurn() {
@@ -110,22 +115,41 @@ public class World {
 	}
 
 	public void movePlayer(int dir) {
+		if(!player.hasTurn())
+			return;
 		// liigutab mängijat
-		if (currentRoom.getFreeDirections(player.getX(), player.getY()).contains(dir)) {
-			player.move(dir);
+		if (currentRoom.getFreeDirections((int) player.getX(), (int) player.getY()).contains(dir)) {
+			double oldX = player.getX();
+			double oldY = player.getY();
+			double[] newPos = player.move(dir);
+			player.setTurn(false);
+			timeline = new Timeline(
+					new KeyFrame(Duration.ZERO, new KeyValue(player.xProperty(), oldX),
+							new KeyValue(player.yProperty(), oldY)),
+					new KeyFrame(Duration.seconds(Game.moveTime), new KeyValue(player.xProperty(), newPos[0]),
+							new KeyValue(player.yProperty(), newPos[1])));
+			timeline.setOnFinished(event -> {
+				if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
+						|| player.getY() >= currentRoom.getHeight()) {
+					// Kui mängija liikus kaardist välja, siis see tähendab, et ta
+					// peab
+					// minema uute ruumi
+					// Leiame selle ja vahetame ruumid ära.
+					Room nextRoom = currentRoom.getNextRoom((int) player.getX(), (int) player.getY(), rooms);
+					if (nextRoom != null)
+						currentRoom = nextRoom;
+					player.setX(currentRoom.getEntranceX());
+					player.setY(currentRoom.getEntranceY());
+				}
+				monsterTurn();
+			});
+			timeline.setAutoReverse(false);
+			timeline.setCycleCount(1);
+			timeline.play();
 		} else {
+			player.setTurn(false);
 			playerAttack(dir);
-		}
-		if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
-				|| player.getY() >= currentRoom.getHeight()) {
-			// Kui mängija liikus kaardist välja, siis see tähendab, et ta peab
-			// minema uute ruumi
-			// Leiame selle ja vahetame ruumid ära.
-			Room nextRoom = currentRoom.getNextRoom(player.getX(), player.getY(), rooms);
-			if (nextRoom != null)
-				currentRoom = nextRoom;
-			player.setX(currentRoom.getEntranceX());
-			player.setY(currentRoom.getEntranceY());
+			monsterTurn();
 		}
 	}
 

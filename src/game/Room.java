@@ -12,7 +12,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.util.Duration;
 import tilemap.TiledMap;
 import tilemap.TiledMapEncodingException;
 
@@ -73,7 +77,7 @@ public class Room implements Renderable {
 		}
 		// koletised ka alluvad tõrjutusprintsiibile :D
 		for (Monster m : monsters) {
-			if (m.getX() == x && m.getY() == y) {
+			if ((int)m.getDestinationX() == x && (int)m.getDestinationY() == y) {
 				return false;
 			}
 		}
@@ -99,6 +103,7 @@ public class Room implements Renderable {
 	}
 
 	public void updateMonsters(Player player) {
+		
 		// Eemaldab kõik surnud koletised listist.
 		monsters.removeIf(monster -> monster.getHealth() < 1);
 		for (Monster m : monsters) {
@@ -108,7 +113,7 @@ public class Room implements Renderable {
 			// suvaliselt ringi.
 			// Kui mitte siis seisab niisama või ründab mängijat.
 			if (distanceFromPlayerSquared > 2) {
-				List<Integer> freeDirections = getFreeDirections(m.getX(), m.getY());
+				List<Integer> freeDirections = getFreeDirections((int) m.getX(), (int) m.getY());
 				if (m.getY() <= 0)
 					freeDirections.remove((Integer) World.NORTH);
 				else if (m.getY() >= getHeight() - 1)
@@ -117,8 +122,22 @@ public class Room implements Renderable {
 					freeDirections.remove((Integer) World.WEST);
 				else if (m.getX() >= getWidth() - 1)
 					freeDirections.remove((Integer) World.EAST);
-				if (freeDirections.size() > 0)
-					m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
+				if (freeDirections.size() > 0){
+					double oldX = m.getX();
+					double oldY = m.getY();
+					double[] newPos = m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
+					m.setDestinationX((int) newPos[0]);
+					m.setDestinationY((int) newPos[1]);
+					Timeline timeline = new Timeline(
+							new KeyFrame(Duration.ZERO, new KeyValue(m.xProperty(), oldX),
+									new KeyValue(m.yProperty(), oldY)),
+							new KeyFrame(Duration.seconds(Game.moveTime), new KeyValue(m.xProperty(), newPos[0]),
+									new KeyValue(m.yProperty(), newPos[1])));
+					timeline.setOnFinished(event -> player.setTurn(true));
+					timeline.setAutoReverse(false);
+					timeline.setCycleCount(1);
+					timeline.play();
+				}
 			} else if (distanceFromPlayerSquared == 1) {
 				m.attackOther(player);
 			}

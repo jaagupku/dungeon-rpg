@@ -66,7 +66,7 @@ public class TiledMap implements Renderable {
 				break;
 			}
 		}
-		layerTiles = new byte[width][height][layerNodes.size() - 1];
+		layerTiles = new byte[width][height][layerNodes.size()];
 		loadTileSheets(tilesetNodes);
 		loadLayers(layerNodes);
 		loadObjects(objectGroupNodes);
@@ -115,9 +115,7 @@ public class TiledMap implements Renderable {
 			if (!layerData.getAttribute("encoding").equals("csv"))
 				throw new TiledMapEncodingException(
 						"Unsupported encoding: " + layerData.getAttribute("encoding") + ", please use CSV.");
-			if (!e.getAttribute("name").equals("collision")) {
-				if (e.getAttribute("visible").equals("0"))
-					continue;
+			if (!e.getAttribute("visible").equals("0")){
 				for (int y = 0; y < layerDataTileLines.length; y++) {
 					String[] temp = layerDataTileLines[y].split(",");
 					for (int x = 0; x < temp.length; x++) {
@@ -125,7 +123,8 @@ public class TiledMap implements Renderable {
 					}
 				}
 				layerCounter++;
-			} else {
+			}
+			if(e.getAttribute("name").equals("collision")){
 				for (int y = 0; y < layerDataTileLines.length; y++) {
 					String[] temp = layerDataTileLines[y].split(",");
 					for (int x = 0; x < temp.length; x++) {
@@ -133,6 +132,7 @@ public class TiledMap implements Renderable {
 					}
 				}
 			}
+			
 		}
 		this.layers = layerCounter;
 	}

@@ -7,6 +7,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -21,6 +22,7 @@ public class Game {
 	private World world;
 	private Canvas canvas;
 	public static int tileSize = 48;
+	public static double moveTime = 0.14;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
@@ -35,9 +37,7 @@ public class Game {
 					world.movePlayer(World.WEST);
 				} else if (event.getCode() == KeyCode.D) {
 					world.movePlayer(World.EAST);
-				} 
-				world.monsterTurn();
-				render();
+				}
 				event.consume();
 			}
 		});
@@ -54,13 +54,20 @@ public class Game {
 	public Scene getGameScene(Stage stage, Main m) {
 		Group root = new Group();
 		canvas.setOnKeyReleased(value -> {
-			if (value.getCode() == KeyCode.ESCAPE){
+			if (value.getCode() == KeyCode.ESCAPE) {
 				stage.setScene(m.getMenuScene(stage));
 			}
 		});
 		root.getChildren().add(canvas);
-		render();
 		Scene scene = new Scene(root);
+		
+		AnimationTimer timer = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+				render();
+			}
+		};
+		timer.start();
 		return scene;
 	}
 }
