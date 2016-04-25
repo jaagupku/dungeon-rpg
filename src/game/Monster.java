@@ -1,4 +1,4 @@
-package application;
+package game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 
-public class Monster extends Fighter implements Drawable {
+public class Monster extends Fighter implements Renderable {
 	private int x, y;
 	private Image img;
 	// monsterStrings ja monsterStats on kahedimensioonilised massiivid.
@@ -23,6 +23,7 @@ public class Monster extends Fighter implements Drawable {
 	private static List<String> names = new ArrayList<String>();
 	private static List<int[]> stats = new ArrayList<int[]>();
 	private static List<Image> images = new ArrayList<Image>();
+	public static List<String> codeNames = new ArrayList<String>();
 
 	public Monster(int x, int y, int id) {
 		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3],
@@ -49,6 +50,7 @@ public class Monster extends Fighter implements Drawable {
 				continue;
 			String[] data = line.split(",");
 			names.add(data[0]);
+			codeNames.add(data[1]);
 			int[] stat = { Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]),
 					Integer.parseInt(data[5]), Integer.parseInt(data[6]) };
 			stats.add(stat);
@@ -92,12 +94,10 @@ public class Monster extends Fighter implements Drawable {
 		}
 	}
 
-	@Override
 	public int getX() {
 		return x;
 	}
 
-	@Override
 	public int getY() {
 		return y;
 	}

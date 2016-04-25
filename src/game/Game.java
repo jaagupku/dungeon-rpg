@@ -1,7 +1,6 @@
-package application;
+package game;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,13 +15,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import tilemap.TiledMapEncodingException;
 
 public class Game {
 	private World world;
 	private Canvas canvas;
 	public static int tileSize = 48;
 
-	public Game() throws ParserConfigurationException, SAXException, IOException {
+	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
 		canvas.setFocusTraversable(true);
 		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {

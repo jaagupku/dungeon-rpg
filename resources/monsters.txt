@@ -1,11 +1,11 @@
-Giant rat,gR,12,3,3,2,2
-Giant Snake,gS,14,6,7,2,4
-Skeleton,Sk,30,11,10,5,2
-Ghoul,Gh,36,7,13,3,2
-Giant Centipede,GC,11,5,7,2,1
-Wraith,Wr,46,15,14,1,5
-Evil Adventurer,EA,125,18,15,6,4
-Mutant,Mu,80,9,9,3,2
+﻿Giant rat,giant_rat,12,3,3,2,2
+Giant Snake,giant_snake,14,6,7,2,4
+Skeleton,skeleton,30,11,10,5,2
+Ghoul,ghoul,36,7,13,3,2
+Giant Centipede,centipede,11,5,7,2,1
+Wraith,wraith,46,15,14,1,5
+Evil Adventurer,e_adventurer,125,18,15,6,4
+Mutant,mutant,80,9,9,3,2
 
-//Nimi,pilt,elud,attackPower,attackAccuracy,defense,agility
+//Visible_Name,code_name,health,attackPower,attackAccuracy,defense,agility
 // Ja koletise ID on tema järjekorra number, mis algab nullist.

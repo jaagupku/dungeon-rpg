@@ -1,8 +1,8 @@
-package application;
+package game;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public class Item implements Drawable {
+public class Item implements Renderable {
 	private int x, y;
 	private String name;
 	private boolean taken;
@@ -29,12 +29,10 @@ public class Item implements Drawable {
 		return name;
 	}
 
-	@Override
 	public int getX() {
 		return x;
 	}
 
-	@Override
 	public int getY() {
 		return y;
 	}

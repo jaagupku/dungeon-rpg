@@ -1,4 +1,4 @@
-package application;
+package game;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,121 +6,53 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
+import tilemap.TiledMap;
+import tilemap.TiledMapEncodingException;
 
-public class Room {
+public class Room implements Renderable {
 	private List<Monster> monsters;
 	private List<Item> items;
 	private List<Connection> connections;
 	private int entranceX, entranceY;
-	private Map map;
+	private TiledMap map;
 	private Random rng = new Random();
-	private Image[] tiles;
 
-	public Room(File file) throws ParserConfigurationException, SAXException, IOException {
+	public Room(File file) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		monsters = new ArrayList<Monster>();
 		items = new ArrayList<Item>();
 		connections = new ArrayList<Connection>();
-		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
-		doc.getDocumentElement().normalize();
-		NodeList nList = doc.getDocumentElement().getChildNodes();
-		parseNodes(nList);
-	}
-
-	private void parseNodes(NodeList nList) {
-		int firstObjGid = 0, firstConnectionGid = 0;
-		for (int i = 0; i < nList.getLength(); i++) {
-			Node node = nList.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element element = (Element) node;
-				if (node.getNodeName().equals("tileset")) {
-					if (element.getAttribute("name").equals("background")) {
-						Game.tileSize = Integer.parseInt(element.getAttribute("tilewidth"));
-						tiles = new Image[Integer.parseInt(element.getAttribute("tilecount"))];
-						Element tileSheetElement = (Element) node.getChildNodes().item(1);
-						Image sheetImg = new Image(tileSheetElement.getAttribute("source").replace("../", ""));
-						int sheetSizeX = (int) (sheetImg.getWidth() / Game.tileSize);
-						for (int tileCounter = 0; tileCounter < tiles.length; tileCounter++) {
-							int x = (tileCounter % sheetSizeX) * Game.tileSize;
-							int y = (tileCounter / sheetSizeX) * Game.tileSize;
-							WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize,
-									Game.tileSize);
-							tiles[tileCounter] = (Image) wi;
-						}
-					} else if (element.getAttribute("name").equals("objects_sheet")) {
-						firstObjGid = Integer.parseInt(element.getAttribute("firstgid"));
-					} else if (element.getAttribute("name").equals("markers")) {
-						firstConnectionGid = Integer.parseInt(element.getAttribute("firstgid"));
-					}
-				} else if (node.getNodeName().equals("layer")) {
-					if (element.getAttribute("name").equals("background")) {
-						int width = Integer.parseInt(element.getAttribute("width"));
-						int height = Integer.parseInt(element.getAttribute("height"));
-						map = new Map(width, height);
-						NodeList data = node.getChildNodes().item(1).getChildNodes();
-						int counter = 0;
-						for (int tile = 0; tile < data.getLength(); tile++) {
-							if (data.item(tile).getNodeType() != Node.ELEMENT_NODE)
-								continue;
-							int x = counter % width;
-							int y = counter / width;
-							counter++;
-							map.changeMapTile(x, y, Integer.parseInt(((Element) data.item(tile)).getAttribute("gid")));
-						}
-					}
-				} else if (node.getNodeName().equals("objectgroup")) {
-					if (element.getAttribute("name").equals("map_data")) {
-						NodeList objects = node.getChildNodes();
-						for (int obj = 0; obj < objects.getLength(); obj++) {
-							if (objects.item(obj).getNodeType() != Node.ELEMENT_NODE)
-								continue;
-							if (Integer.parseInt(
-									((Element) objects.item(obj)).getAttribute("gid")) == firstConnectionGid + 1) {
-								int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
-										/ Game.tileSize;
-								int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
-										/ Game.tileSize - 1;
-								setEntranceX(x);
-								setEntranceY(y);
-							} else if (Integer.parseInt(
-									((Element) objects.item(obj)).getAttribute("gid")) == firstConnectionGid) {
-
-								String connectionName = ((Element) objects.item(obj)).getAttribute("name");
-								int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
-										/ Game.tileSize;
-								int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
-										/ Game.tileSize - 1;
-								connections.add(new Connection(connectionName, x, y));
-							}
-						}
-					} else if (element.getAttribute("name").equals("monsters")) {
-						NodeList objects = node.getChildNodes();
-						for (int obj = 0; obj < objects.getLength(); obj++) {
-							if (objects.item(obj).getNodeType() != Node.ELEMENT_NODE)
-								continue;
-							int id = Integer.parseInt(((Element) objects.item(obj)).getAttribute("gid"))-firstObjGid;
-							int x = Integer.parseInt(((Element) objects.item(obj)).getAttribute("x"))
-									/ Game.tileSize;
-							int y = Integer.parseInt(((Element) objects.item(obj)).getAttribute("y"))
-									/ Game.tileSize - 1;
-							monsters.add(new Monster(x, y, id));
-						}
-					}
-				}
+		map = new TiledMap(file);
+		List<Node> objects = map.getObjects();
+		for (Node n : objects) {
+			Element e = (Element) n;
+			switch (e.getAttribute("type")) {
+			case "monster": {
+				int monsterID = Monster.codeNames.indexOf(e.getAttribute("name"));
+				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
+				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
+				monsters.add(new Monster(x, y, monsterID));
+				break;
+			}
+			case "connection": {
+				String connectionName = e.getAttribute("name");
+				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
+				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
+				connections.add(new Connection(connectionName, x, y));
+				break;
+			}
+			case "player_spawn": {
+				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
+				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
+				setEntranceX(x);
+				setEntranceY(y);
+			}
 			}
 		}
 	}
@@ -136,7 +68,7 @@ public class Room {
 			} // kui ei ühenda, siis pole tühi
 			return false;
 		}
-		if (getCell(x, y) == Map.WALL) {
+		if (!map.isEmpty(x, y)) {
 			return false;
 		}
 		// koletised ka alluvad tõrjutusprintsiibile :D
@@ -148,17 +80,12 @@ public class Room {
 		return true;
 	}
 
-	public void render(Canvas canvas, double offsetX, double offsetY) {
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		for (int y = 0; y < getHeight(); y++) {
-			for (int x = 0; x < getWidth(); x++) {
-				int cell = getCell(x, y);
-				gc.drawImage(tiles[cell - 1], x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
-			}
-		}
-		List<Drawable> drawList = new ArrayList<Drawable>(items);
+	@Override
+	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+		map.render(gc, offsetX, offsetY);
+		List<Renderable> drawList = new ArrayList<Renderable>(items);
 		drawList.addAll(monsters);
-		for (Drawable d : drawList) {
+		for (Renderable d : drawList) {
 			d.render(gc, offsetX, offsetY);
 		}
 	}
@@ -243,16 +170,12 @@ public class Room {
 		return connections;
 	}
 
-	public int getCell(int x, int y) {
-		return map.getCell(x, y);
-	}
-
 	public int getWidth() {
-		return map.getSizeX();
+		return map.getWidth();
 	}
 
 	public int getHeight() {
-		return map.getSizeY();
+		return map.getHeight();
 	}
 
 	public int getEntranceX() {

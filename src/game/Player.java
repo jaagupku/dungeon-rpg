@@ -1,9 +1,9 @@
-package application;
+package game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Player extends Fighter implements Drawable {
+public class Player extends Fighter implements Renderable {
 	private int x, y;
 	private int xp, level;
 	private final char SWORD = 'i', MAN = '\u263A';
@@ -45,12 +45,10 @@ public class Player extends Fighter implements Drawable {
 		}
 	}
 
-	@Override
 	public int getX() {
 		return x;
 	}
 
-	@Override
 	public int getY() {
 		return y;
 	}

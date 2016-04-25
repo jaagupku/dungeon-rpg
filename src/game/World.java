@@ -1,4 +1,4 @@
-package application;
+package game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import tilemap.TiledMapEncodingException;
 
 public class World {
 	public static final int NORTH = 0, SOUTH = 1, WEST = 2, EAST = 3; // Directions
@@ -20,7 +21,7 @@ public class World {
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
 
-	public World() throws ParserConfigurationException, SAXException, IOException {
+	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
@@ -70,34 +71,38 @@ public class World {
 	}
 
 	public void render(Canvas canvas) {
+		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		currentRoom.render(gc, offset[0], offset[1]);
+		player.render(gc, offset[0], offset[1]);
+	}
+	
+	private double[] getOffset(double screenWidth, double screenHeight){
 		double offsetX, offsetY;
-		double midX = canvas.getWidth() / 2, 
-			   midY = canvas.getHeight() / 2;
-		
-		if (currentRoom.getWidth() * Game.tileSize > canvas.getWidth()) {
+		double midX = screenWidth / 2, 
+				   midY = screenHeight / 2;
+		if (currentRoom.getWidth() * Game.tileSize > screenWidth) {
 			offsetX = player.getX() * Game.tileSize - midX;
 			if (offsetX < 0)
 				offsetX = 0;
-			else if (offsetX > currentRoom.getWidth()*Game.tileSize - canvas.getWidth()){
-				offsetX = currentRoom.getWidth()*Game.tileSize - canvas.getWidth();
+			else if (offsetX > currentRoom.getWidth()*Game.tileSize - screenWidth){
+				offsetX = currentRoom.getWidth()*Game.tileSize - screenWidth;
 			}
 		} else {
-			offsetX = currentRoom.getWidth() * Game.tileSize / 2 - canvas.getWidth() / 2;
+			offsetX = currentRoom.getWidth() * Game.tileSize / 2 - screenWidth / 2;
 		}
 
-		if (currentRoom.getHeight() * Game.tileSize > canvas.getHeight()) {
+		if (currentRoom.getHeight() * Game.tileSize > screenHeight) {
 			offsetY = player.getY() * Game.tileSize - midY;
 			if (offsetY < 0)
 				offsetY = 0;
-			else if (offsetY > currentRoom.getHeight()*Game.tileSize - canvas.getHeight()){
-				offsetY = currentRoom.getHeight()*Game.tileSize - canvas.getHeight();
+			else if (offsetY > currentRoom.getHeight()*Game.tileSize - screenHeight){
+				offsetY = currentRoom.getHeight()*Game.tileSize - screenHeight;
 			}
 		} else {
-			offsetY = currentRoom.getHeight() * Game.tileSize / 2 - canvas.getHeight() / 2;
+			offsetY = currentRoom.getHeight() * Game.tileSize / 2 - screenHeight / 2;
 		}
-		currentRoom.render(canvas, offsetX, offsetY);
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		player.render(gc, offsetX, offsetY);
+		return new double[]{offsetX, offsetY};
 	}
 
 	public void monsterTurn() {

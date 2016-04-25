@@ -1,4 +1,4 @@
-package application;
+package game;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import tilemap.TiledMapEncodingException;
 
 public class Main extends Application {
 
@@ -35,7 +36,7 @@ public class Main extends Application {
 			Game game;
 			try {
 				game = new Game();
-			} catch (ParserConfigurationException | SAXException | IOException e) {
+			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 			stage.setScene(game.getGameScene(stage, this));
