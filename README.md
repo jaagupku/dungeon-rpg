@@ -1,7 +1,7 @@
 # Dungeon the RPG
 This is a project for "Object-oriented Programming" course.
 
-## Guide to create rooms with Tiled
+## Guide to create rooms with Tiled - THIS IS FOR OLD VERSION, new is coming soon
 
 All rooms are created with [Tiled](http://www.mapeditor.org/ "Tiled Map Editor download") map editor.
 
