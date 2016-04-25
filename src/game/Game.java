@@ -22,12 +22,13 @@ public class Game {
 	private World world;
 	private Canvas canvas;
 	public static int tileSize = 48;
-	public static double moveTime = 0.14;
+	public static int moveTime = 140;
+	private AnimationTimer timer;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
 		canvas.setFocusTraversable(true);
-		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
 				if (event.getCode() == KeyCode.W) {
 					world.movePlayer(World.NORTH);
@@ -51,17 +52,24 @@ public class Game {
 		world.render(canvas);
 	}
 
+	private void stop() {
+		timer.stop();
+		world = null;
+		canvas = null;
+	}
+
 	public Scene getGameScene(Stage stage, Main m) {
 		Group root = new Group();
 		canvas.setOnKeyReleased(value -> {
 			if (value.getCode() == KeyCode.ESCAPE) {
+				stop();
 				stage.setScene(m.getMenuScene(stage));
 			}
 		});
 		root.getChildren().add(canvas);
 		Scene scene = new Scene(root);
-		
-		AnimationTimer timer = new AnimationTimer() {
+
+		timer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				render();

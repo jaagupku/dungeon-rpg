@@ -48,14 +48,14 @@ public class Player extends Fighter implements Renderable, Movable {
 			break;
 		}
 		}
-		return new double[]{newX, newY};
+		return new double[] { newX, newY };
 	}
-	
-	public void setTurn(boolean b){
+
+	public void setTurn(boolean b) {
 		hasTurn = b;
 	}
-	
-	public boolean hasTurn(){
+
+	public boolean hasTurn() {
 		return hasTurn;
 	}
 

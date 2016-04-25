@@ -77,7 +77,7 @@ public class Room implements Renderable {
 		}
 		// koletised ka alluvad tõrjutusprintsiibile :D
 		for (Monster m : monsters) {
-			if ((int)m.getDestinationX() == x && (int)m.getDestinationY() == y) {
+			if ((int) m.getDestinationX() == x && (int) m.getDestinationY() == y) {
 				return false;
 			}
 		}
@@ -103,7 +103,7 @@ public class Room implements Renderable {
 	}
 
 	public void updateMonsters(Player player) {
-		
+
 		// Eemaldab kõik surnud koletised listist.
 		monsters.removeIf(monster -> monster.getHealth() < 1);
 		for (Monster m : monsters) {
@@ -122,7 +122,7 @@ public class Room implements Renderable {
 					freeDirections.remove((Integer) World.WEST);
 				else if (m.getX() >= getWidth() - 1)
 					freeDirections.remove((Integer) World.EAST);
-				if (freeDirections.size() > 0){
+				if (freeDirections.size() > 0) {
 					double oldX = m.getX();
 					double oldY = m.getY();
 					double[] newPos = m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
@@ -131,7 +131,7 @@ public class Room implements Renderable {
 					Timeline timeline = new Timeline(
 							new KeyFrame(Duration.ZERO, new KeyValue(m.xProperty(), oldX),
 									new KeyValue(m.yProperty(), oldY)),
-							new KeyFrame(Duration.seconds(Game.moveTime), new KeyValue(m.xProperty(), newPos[0]),
+							new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(m.xProperty(), newPos[0]),
 									new KeyValue(m.yProperty(), newPos[1])));
 					timeline.setOnFinished(event -> player.setTurn(true));
 					timeline.setAutoReverse(false);

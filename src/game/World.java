@@ -115,7 +115,7 @@ public class World {
 	}
 
 	public void movePlayer(int dir) {
-		if(!player.hasTurn())
+		if (!player.hasTurn())
 			return;
 		// liigutab mängijat
 		if (currentRoom.getFreeDirections((int) player.getX(), (int) player.getY()).contains(dir)) {
@@ -126,12 +126,13 @@ public class World {
 			timeline = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(player.xProperty(), oldX),
 							new KeyValue(player.yProperty(), oldY)),
-					new KeyFrame(Duration.seconds(Game.moveTime), new KeyValue(player.xProperty(), newPos[0]),
+					new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(player.xProperty(), newPos[0]),
 							new KeyValue(player.yProperty(), newPos[1])));
 			timeline.setOnFinished(event -> {
 				if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
 						|| player.getY() >= currentRoom.getHeight()) {
-					// Kui mängija liikus kaardist välja, siis see tähendab, et ta
+					// Kui mängija liikus kaardist välja, siis see tähendab, et
+					// ta
 					// peab
 					// minema uute ruumi
 					// Leiame selle ja vahetame ruumid ära.
