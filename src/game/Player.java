@@ -27,6 +27,16 @@ public class Player extends Fighter implements Renderable, Movable {
 		img = new Image("player.png");
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
+		Game.healthBar.setText(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
+		Game.healthBar.setValue(getHealth() / getMaxHealth());
+
+		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
+		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+
+		healthProperty().addListener(cl -> {
+			Game.healthBar.setValue(((double) getHealth()) / getMaxHealth());
+			Game.healthBar.setText(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
+		});
 	}
 
 	@Override
@@ -69,13 +79,42 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public void setTurn(boolean b) {
 		if (b) {
-			turnDelayTimeline = new Timeline(new KeyFrame(Duration.millis(Game.TURN_DELAY + Game.moveTime), ae -> hasTurn = true));
+			turnDelayTimeline = new Timeline(
+					new KeyFrame(Duration.millis(Game.TURN_DELAY + Game.moveTime), ae -> hasTurn = true));
 			turnDelayTimeline.setAutoReverse(false);
 			turnDelayTimeline.setCycleCount(1);
 			turnDelayTimeline.play();
 			return;
 		}
 		hasTurn = b;
+	}
+
+	public void addXp(int xp) {
+		this.xp += xp;
+		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
+		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		if (this.xp >= nextXp)
+			levelUp();
+
+	}
+
+	private int xpToNextLevel() {
+		int sum = 0;
+		for (int i = 1; i <= level; i++) {
+			sum += (int) Math.floor(i + 30 * Math.pow(2, i / 3.7d));
+		}
+		return sum;
+	}
+
+	@Override
+	protected void levelUp() {
+		super.levelUp();
+		prevXp = nextXp;
+		level++;
+		nextXp = xpToNextLevel();
+		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
+		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		System.out.println("You have leveled up. You are now level " + level);
 	}
 
 	public boolean hasTurn() {
@@ -114,30 +153,6 @@ public class Player extends Fighter implements Renderable, Movable {
 		;
 	}
 
-	public void addXp(int xp) {
-		this.xp += xp;
-		if (this.xp >= nextXp)
-			levelUp();
-
-	}
-
-	private int xpToNextLevel() {
-		int sum = 0;
-		for (int i = 1; i <= level; i++) {
-			sum += (int) Math.floor(i + 30 * Math.pow(2, i / 3.7d));
-		}
-		return sum;
-	}
-
-	@Override
-	protected void levelUp() {
-		super.levelUp();
-		prevXp = nextXp;
-		level++;
-		nextXp = xpToNextLevel();
-		System.out.println("You have leveled up. You are now level " + level);
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -165,7 +180,7 @@ public class Player extends Fighter implements Renderable, Movable {
 	public int getNextXp() {
 		return nextXp;
 	}
-	
+
 	public int getPrevXp() {
 		return prevXp;
 	}

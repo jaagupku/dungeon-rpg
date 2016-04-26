@@ -16,12 +16,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import tilemap.TiledMapEncodingException;
 
 public class Game {
 	private World world;
 	private Canvas canvas;
+	public static Bar healthBar, xpBar;
 	public static int tileSize = 48;
 	public static int moveTime = 160;
 	public static final int TURN_DELAY = 25;
@@ -47,6 +49,19 @@ public class Game {
 			}
 		});
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
+		
+		double xpWidth = canvas.getWidth() - 100;
+		double xpHeight = 10;
+		double xpX = (canvas.getWidth() - xpWidth) / 2;
+		double xpY = canvas.getHeight() - xpHeight;
+		xpBar = new Bar(xpX, xpY, xpWidth, xpHeight, Color.YELLOW, Color.GRAY);
+		
+		int hpWidth = 250;
+		int hpHeight = 25;
+		double hpX = (canvas.getWidth() - hpWidth) / 2;
+		double hpY = canvas.getHeight() - hpHeight - xpHeight - 2;
+		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.RED);
+		
 		world = new World();
 	}
 
@@ -55,8 +70,13 @@ public class Game {
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, Main.windowWidth, Main.windowHeight);
 		world.render(canvas);
+		
+		healthBar.draw(gc);
+		xpBar.draw(gc);
+		
 		gc.setFill(Color.WHITE);
 		double currentFps = 1_000_000_000 / delta;
+		gc.setFont(new Font(14));
 		gc.fillText("FPS: " + Double.toString(currentFps), 30, 30);
 	}
 
@@ -76,7 +96,6 @@ public class Game {
 		});
 		root.getChildren().add(canvas);
 		Scene scene = new Scene(root);
-
 		timer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {

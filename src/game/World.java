@@ -45,6 +45,8 @@ public class World {
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
+
+		
 	}
 
 	public void render(Canvas canvas) {
@@ -52,51 +54,6 @@ public class World {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1]);
 
-		double xpWidth = canvas.getWidth() - 100;
-		double xpHeight = 10;
-		double xpX = (canvas.getWidth() - xpWidth) / 2;
-		double xpY = canvas.getHeight() - xpHeight;
-
-		int hpWidth = 250;
-		int hpHeight = 25;
-		double hpX = (canvas.getWidth() - hpWidth) / 2;
-		double hpY = canvas.getHeight() - hpHeight - xpHeight - 2;
-
-		String xpText = Integer.toString(player.getXp()) + "/" + Integer.toString(player.getNextXp());
-		double xpTextX = canvas.getWidth() / 2;
-		double xpTextY = canvas.getHeight();
-
-		String hpText = Integer.toString(player.getHealth()) + "/" + Integer.toString(player.getMaxHealth());
-		double hpTextX = hpX + hpWidth/2;
-		double hpTextY = hpY;
-		
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(3);
-		gc.strokeRect(hpX, hpY, hpWidth, hpHeight);
-		gc.setLineWidth(1);
-		gc.setFill(Color.RED);
-		gc.fillRect(hpX, hpY, hpWidth, hpHeight);
-		gc.setFill(Color.GREEN);
-		gc.fillRect(hpX, hpY, hpWidth * player.getHealth() / player.getMaxHealth(), hpHeight);
-
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(2);
-		gc.strokeRect(xpX, xpY, xpWidth, xpHeight);
-		gc.setLineWidth(1);
-		gc.setFill(Color.GREY);
-		gc.fillRect(xpX, xpY, xpWidth, xpHeight);
-		gc.setFill(Color.YELLOW);
-		gc.fillRect(xpX, xpY,
-				xpWidth * (player.getXp() - player.getPrevXp()) / (player.getNextXp() - player.getPrevXp()), xpHeight);
-
-		gc.setFill(Color.DIMGREY.darker().darker().darker());
-		gc.setFont(new Font("verdana", xpHeight + 2));
-		gc.setTextAlign(TextAlignment.CENTER);
-		gc.setTextBaseline(VPos.BASELINE);
-		gc.fillText(xpText, xpTextX, xpTextY);
-		
-		gc.setTextBaseline(VPos.TOP);
-		gc.fillText(hpText, hpTextX, hpTextY);
 	}
 
 	public void movePlayer(int dir) {

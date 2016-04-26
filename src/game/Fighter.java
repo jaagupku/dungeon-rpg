@@ -2,11 +2,15 @@ package game;
 
 import java.util.Random;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
 public class Fighter {
 
 	String name;
 	Random rng = new Random();
-	private int maxHealth, health;
+	private int maxHealth;
+	private IntegerProperty health;
 	private int attackPower, attackAccuracy;
 	private int defense, agility;
 	// attackPower on max damage, attackAccuracy veeretab täringut vastase
@@ -20,7 +24,7 @@ public class Fighter {
 		super();
 		this.name = name;
 		this.maxHealth = maxHealth;
-		health = maxHealth;
+		health = new SimpleIntegerProperty(maxHealth);
 		this.attackPower = attackPower;
 		this.attackAccuracy = attackAccuracy;
 		this.defense = defense;
@@ -49,10 +53,10 @@ public class Fighter {
 	}
 
 	private void takeDamage(int dmg) {
-		health -= dmg;
+		health.set(getHealth() - dmg);
 		System.out.print(getName() + " got damaged for " + dmg + " hitpoints");
-		if (health <= 0) {
-			health = 0;
+		if (getHealth() <= 0) {
+			health.set(0);
 			System.out.println(".");
 			System.out.println(getName() + " is now dead.");
 		} else {
@@ -61,12 +65,12 @@ public class Fighter {
 	}
 
 	public void heal(int health) {
-		health = this.health + health > maxHealth ? maxHealth : this.health + health;
+		this.health.set(getHealth() + health > maxHealth ? maxHealth : getHealth() + health);
 	}
 
 	protected void levelUp() {
 		maxHealth += 10;
-		health += 10;
+		health.set(getHealth() + 10);
 		attackPower += 2;
 		attackAccuracy += 1;
 		defense += 1;
@@ -86,6 +90,10 @@ public class Fighter {
 	}
 
 	public int getHealth() {
+		return health.intValue();
+	}
+	
+	IntegerProperty healthProperty(){
 		return health;
 	}
 
