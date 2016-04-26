@@ -11,7 +11,7 @@ import javafx.util.Duration;
 
 public class Player extends Fighter implements Renderable, Movable {
 	private DoubleProperty x, y;
-	private int xp, level;
+	private int xp, level, nextXp, prevXp;
 	private Image img;
 	private boolean hasTurn;
 	private Timeline turnDelayTimeline;
@@ -22,6 +22,8 @@ public class Player extends Fighter implements Renderable, Movable {
 		this.y = new SimpleDoubleProperty(y);
 		level = 1;
 		xp = 0;
+		prevXp = 0;
+		nextXp = xpToNextLevel();
 		img = new Image("player.png");
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
@@ -114,7 +116,7 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public void addXp(int xp) {
 		this.xp += xp;
-		if (this.xp >= xpToNextLevel())
+		if (this.xp >= nextXp)
 			levelUp();
 
 	}
@@ -130,14 +132,16 @@ public class Player extends Fighter implements Renderable, Movable {
 	@Override
 	protected void levelUp() {
 		super.levelUp();
+		prevXp = nextXp;
 		level++;
+		nextXp = xpToNextLevel();
 		System.out.println("You have leveled up. You are now level " + level);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		int nextlvlxp = xpToNextLevel();
+		int nextlvlxp = nextXp;
 		sb.append("You are level ");
 		sb.append(level);
 		sb.append(", you have ");
@@ -156,5 +160,17 @@ public class Player extends Fighter implements Renderable, Movable {
 		sb.append(getAgility());
 		sb.append("\n");
 		return sb.toString();
+	}
+
+	public int getNextXp() {
+		return nextXp;
+	}
+	
+	public int getPrevXp() {
+		return prevXp;
+	}
+
+	public int getXp() {
+		return xp;
 	}
 }

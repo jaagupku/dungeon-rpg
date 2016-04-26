@@ -23,11 +23,13 @@ import javafx.scene.image.WritableImage;
 
 public class TiledMap implements Renderable {
 
-	private int width, height, layers;
+	private int width, height, layersAmount;
 	private List<Image> tileSheet;
 	private List<Node> objects;
-	private byte[][] collisionLayer;
-	private byte[][][] layerTiles; // layers[x][y][layerId]
+	private TileLayer collisionLayer;
+	private TileLayer[] layers;
+	// private byte[][] collisionLayer;
+	// private byte[][][] layerTiles; // layers[x][y][layerId]
 
 	public TiledMap(File file)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
@@ -38,7 +40,6 @@ public class TiledMap implements Renderable {
 		Node root = doc.getDocumentElement();
 		width = Integer.parseInt(((Element) root).getAttribute("width"));
 		height = Integer.parseInt(((Element) root).getAttribute("height"));
-		collisionLayer = new byte[width][height];
 		objects = new ArrayList<Node>();
 		Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
 		NodeList rootChilds = root.getChildNodes();
@@ -66,8 +67,8 @@ public class TiledMap implements Renderable {
 				break;
 			}
 		}
-		layerTiles = new byte[width][height][layerNodes.size()];
-		loadTileSheets(tilesetNodes);
+		layers = new TileLayer[layerNodes.size()];
+		loadTileSets(tilesetNodes);
 		loadLayers(layerNodes);
 		loadObjects(objectGroupNodes);
 
@@ -86,7 +87,7 @@ public class TiledMap implements Renderable {
 
 	}
 
-	private void loadTileSheets(List<Node> sheets) {
+	private void loadTileSets(List<Node> sheets) {
 		for (Node n : sheets) {
 			Element e = (Element) n;
 			if (e.getAttribute("name").equals("markers"))
@@ -108,55 +109,36 @@ public class TiledMap implements Renderable {
 	private void loadLayers(List<Node> layers) throws TiledMapEncodingException {
 		int layerCounter = 0;
 		for (Node n : layers) {
-			Element e = (Element) n;
-			Node layerDataNode = n.getChildNodes().item(1);
-			Element layerData = (Element) layerDataNode;
-			String[] layerDataTileLines = layerDataNode.getFirstChild().getNodeValue().trim().split("\n");
-			if (!layerData.getAttribute("encoding").equals("csv"))
-				throw new TiledMapEncodingException(
-						"Unsupported encoding: " + layerData.getAttribute("encoding") + ", please use CSV.");
-			if (!e.getAttribute("visible").equals("0")){
-				for (int y = 0; y < layerDataTileLines.length; y++) {
-					String[] temp = layerDataTileLines[y].split(",");
-					for (int x = 0; x < temp.length; x++) {
-						layerTiles[x][y][layerCounter] = (byte) (Byte.parseByte(temp[x]) - 1);
-					}
-				}
-				layerCounter++;
-			}
-			if(e.getAttribute("name").equals("collision")){
-				for (int y = 0; y < layerDataTileLines.length; y++) {
-					String[] temp = layerDataTileLines[y].split(",");
-					for (int x = 0; x < temp.length; x++) {
-						collisionLayer[x][y] = Byte.parseByte(temp[x]);
-					}
-				}
-			}
-			
+			this.layers[layerCounter] = new TileLayer(n);
+			if (((Element) n).getAttribute("name").equals("collision"))
+				collisionLayer = this.layers[layerCounter];
+			this.layers[layerCounter].renderTilesOnImage(tileSheet);
+			layerCounter++;
 		}
-		this.layers = layerCounter;
+		layersAmount = layerCounter;
 	}
 
 	public List<Node> getObjects() {
 		return objects;
 	}
 
-	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		for (int layer = 0; layer < layers; layer++) {
-			for (int y = 0; y < getHeight(); y++) {
-				for (int x = 0; x < getWidth(); x++) {
-					int tileGID = layerTiles[x][y][layer];
-					if (tileGID != -1)
-						gc.drawImage(tileSheet.get(tileGID), x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
-				}
-			}
-		}
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int layer) {
+		layers[layer].render(gc, offsetX, offsetY);
+	}
 
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int from, int to) {
+		for (int layer = from; layer < to; layer++)
+			layers[layer].render(gc, offsetX, offsetY);
+	}
+
+	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+		for (TileLayer tl : layers) {
+			tl.render(gc, offsetX, offsetY);
+		}
 	}
 
 	public boolean isEmpty(int x, int y) {
-		return collisionLayer[x][y] == 0;
+		return collisionLayer.getTile(x, y) == -1;
 	}
 
 	public int getWidth() {

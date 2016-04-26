@@ -15,6 +15,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import tilemap.TiledMapEncodingException;
 
@@ -25,6 +26,8 @@ public class Game {
 	public static int moveTime = 160;
 	public static final int TURN_DELAY = 25;
 	private AnimationTimer timer;
+	private long before = 0;
+	
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
@@ -47,10 +50,14 @@ public class Game {
 		world = new World();
 	}
 
-	private void render() {
+	private void render(long delta) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, Main.windowWidth, Main.windowHeight);
 		world.render(canvas);
+		gc.setFill(Color.WHITE);
+		double currentFps = 1_000_000_000 / delta;
+		gc.fillText("FPS: " + Double.toString(currentFps), 30, 30);
 	}
 
 	private void stop() {
@@ -73,7 +80,9 @@ public class Game {
 		timer = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				render();
+				long delta = now - before;
+				render(delta);
+				before = now;
 			}
 		};
 		timer.start();

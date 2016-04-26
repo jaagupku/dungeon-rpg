@@ -20,7 +20,7 @@ import javafx.util.Duration;
 import tilemap.TiledMap;
 import tilemap.TiledMapEncodingException;
 
-public class Room implements Renderable {
+public class Room {
 	private List<Monster> monsters;
 	private List<Item> items;
 	private List<Connection> connections;
@@ -84,12 +84,15 @@ public class Room implements Renderable {
 		return true;
 	}
 
-	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		map.render(gc, offsetX, offsetY);
-		List<Renderable> drawList = new ArrayList<Renderable>(items);
-		drawList.addAll(monsters);
-		for (Renderable d : drawList) {
+	public void render(GraphicsContext gc, Player player, double offsetX, double offsetY) {
+		List<Renderable> renderOrder = new ArrayList<Renderable>();
+		
+		renderOrder.add(map);
+		renderOrder.addAll(items);
+		renderOrder.addAll(monsters);
+		renderOrder.add(player);
+		
+		for (Renderable d : renderOrder) {
 			d.render(gc, offsetX, offsetY);
 		}
 	}
