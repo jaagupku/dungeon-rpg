@@ -25,7 +25,7 @@ public class Game {
 	private Canvas canvas;
 	public static Bar healthBar, xpBar;
 	public static int tileSize = 48;
-	public static int moveTime = 160;
+	public static int moveTime = 144;
 	public static final int TURN_DELAY = 25;
 	private AnimationTimer timer;
 	private long before = 0;

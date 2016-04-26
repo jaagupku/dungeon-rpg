@@ -83,7 +83,12 @@ public class World {
 			timeline.play();
 		} else {
 			playerAttack(dir);
-			monsterTurn();
+			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime), ae -> {
+				monsterTurn();
+			}));
+			delay.setCycleCount(1);
+			delay.setAutoReverse(false);
+			delay.play();
 		}
 	}
 

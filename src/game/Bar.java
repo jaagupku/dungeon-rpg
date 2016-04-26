@@ -36,7 +36,7 @@ public class Bar {
 		this.color1 = color1;
 		this.color2 = color2;
 		textColor = Color.DIMGREY.darker().darker().darker();
-		font = new Font("verdana", height - height/20);
+		font = new Font("verdana", height - height / 20);
 		value = new SimpleDoubleProperty();
 		changeableValue = new SimpleDoubleProperty();
 		changeableValue.addListener((obs, oldV, newV) -> {
@@ -54,16 +54,20 @@ public class Bar {
 	}
 
 	public void draw(GraphicsContext gc) {
+		draw(gc, posX, posY);
+	}
+
+	public void draw(GraphicsContext gc, double x, double y) {
 		Paint prevStroke = gc.getStroke();
 		Paint prevFill = gc.getFill();
 		gc.setStroke(Color.BLACK);
 		gc.setLineWidth(2);
-		gc.strokeRect(posX, posY, width, height);
+		gc.strokeRect(x, y, width, height);
 		gc.setLineWidth(1);
 		gc.setFill(color2);
-		gc.fillRect(posX, posY, width, height);
+		gc.fillRect(x, y, width, height);
 		gc.setFill(color1);
-		gc.fillRect(posX, posY, width * value.doubleValue(), height);
+		gc.fillRect(x, y, width * value.doubleValue(), height);
 		gc.setFill(textColor);
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.setTextBaseline(VPos.CENTER);
@@ -82,13 +86,12 @@ public class Bar {
 		this.width = width;
 		this.height = height;
 	}
-	
-	public void setText(String s){
+
+	public void setText(String s) {
 		text = s;
 	}
 
-	public void setValue(double value){
-		System.out.println(value);
+	public void setValue(double value) {
 		changeableValue.set(value);
 	}
 }
