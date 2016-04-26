@@ -1,15 +1,20 @@
 package game;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 public class Player extends Fighter implements Renderable, Movable {
 	private DoubleProperty x, y;
 	private int xp, level;
 	private Image img;
 	private boolean hasTurn;
+	private Timeline turnDelayTimeline;
 
 	public Player(int x, int y, int maxHealth) {
 		super("Player", maxHealth, 10, 7, 3, 3);
@@ -19,6 +24,7 @@ public class Player extends Fighter implements Renderable, Movable {
 		xp = 0;
 		img = new Image("player.png");
 		hasTurn = true;
+		turnDelayTimeline = new Timeline();
 	}
 
 	@Override
@@ -28,7 +34,9 @@ public class Player extends Fighter implements Renderable, Movable {
 	}
 
 	@Override
-	public double[] move(int dir) {
+	public Timeline move(int dir) {
+		double oldX = getX();
+		double oldY = getY();
 		double newX = getX(), newY = getY();
 		switch (dir) {
 		case World.NORTH: {
@@ -48,10 +56,23 @@ public class Player extends Fighter implements Renderable, Movable {
 			break;
 		}
 		}
-		return new double[] { newX, newY };
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
+				new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(xProperty(), newX),
+						new KeyValue(yProperty(), newY)));
+		timeline.setAutoReverse(false);
+		timeline.setCycleCount(1);
+		return timeline;
 	}
 
 	public void setTurn(boolean b) {
+		if (b) {
+			turnDelayTimeline = new Timeline(new KeyFrame(Duration.millis(Game.TURN_DELAY + Game.moveTime), ae -> hasTurn = true));
+			turnDelayTimeline.setAutoReverse(false);
+			turnDelayTimeline.setCycleCount(1);
+			turnDelayTimeline.play();
+			return;
+		}
 		hasTurn = b;
 	}
 

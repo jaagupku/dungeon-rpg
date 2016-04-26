@@ -22,7 +22,8 @@ public class Game {
 	private World world;
 	private Canvas canvas;
 	public static int tileSize = 48;
-	public static int moveTime = 140;
+	public static int moveTime = 160;
+	public static final int TURN_DELAY = 25;
 	private AnimationTimer timer;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {

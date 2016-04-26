@@ -123,25 +123,14 @@ public class Room implements Renderable {
 				else if (m.getX() >= getWidth() - 1)
 					freeDirections.remove((Integer) World.EAST);
 				if (freeDirections.size() > 0) {
-					double oldX = m.getX();
-					double oldY = m.getY();
-					double[] newPos = m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
-					m.setDestinationX((int) newPos[0]);
-					m.setDestinationY((int) newPos[1]);
-					Timeline timeline = new Timeline(
-							new KeyFrame(Duration.ZERO, new KeyValue(m.xProperty(), oldX),
-									new KeyValue(m.yProperty(), oldY)),
-							new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(m.xProperty(), newPos[0]),
-									new KeyValue(m.yProperty(), newPos[1])));
-					timeline.setOnFinished(event -> player.setTurn(true));
-					timeline.setAutoReverse(false);
-					timeline.setCycleCount(1);
+					Timeline timeline = m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
 					timeline.play();
 				}
 			} else if (distanceFromPlayerSquared == 1) {
 				m.attackOther(player);
 			}
 		}
+		player.setTurn(true);
 	}
 
 	public List<Integer> getFreeDirections(int x, int y) {

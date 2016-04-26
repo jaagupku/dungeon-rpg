@@ -79,7 +79,7 @@ public class Main extends Application {
 		// windowHeight = newValue.intValue());
 		// scene.widthProperty().addListener((ov, oldValue, newValue) ->
 		// windowWidth = newValue.intValue());
-		scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/menu.css").toExternalForm());
 		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + windowWidth
 				+ "px " + windowHeight + "px;");
 		return scene;

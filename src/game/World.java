@@ -24,7 +24,6 @@ public class World {
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
-	private Timeline timeline;
 
 	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
@@ -42,7 +41,44 @@ public class World {
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
-		timeline = new Timeline();
+	}
+
+	public void render(Canvas canvas) {
+		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		currentRoom.render(gc, offset[0], offset[1]);
+		player.render(gc, offset[0], offset[1]);
+	}
+
+	public void movePlayer(int dir) {
+		if (!player.hasTurn())
+			return;
+		// liigutab mängijat
+		player.setTurn(false);
+		if (currentRoom.getFreeDirections((int) player.getX(), (int) player.getY()).contains(dir)) {
+			
+			Timeline timeline = player.move(dir);
+			timeline.setOnFinished(event -> {
+				if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
+						|| player.getY() >= currentRoom.getHeight()) {
+					// Kui mängija liikus kaardist välja, siis see tähendab, et
+					// ta
+					// peab
+					// minema uute ruumi
+					// Leiame selle ja vahetame ruumid ära.
+					Room nextRoom = currentRoom.getNextRoom((int) player.getX(), (int) player.getY(), rooms);
+					if (nextRoom != null)
+						currentRoom = nextRoom;
+					player.setX(currentRoom.getEntranceX());
+					player.setY(currentRoom.getEntranceY());
+				}
+				monsterTurn();
+			});
+			timeline.play();
+		} else {
+			playerAttack(dir);
+			monsterTurn();
+		}
 	}
 
 	public void playerAttack(int dir) {
@@ -76,13 +112,6 @@ public class World {
 		}
 	}
 
-	public void render(Canvas canvas) {
-		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		currentRoom.render(gc, offset[0], offset[1]);
-		player.render(gc, offset[0], offset[1]);
-	}
-
 	private double[] getOffset(double screenWidth, double screenHeight) {
 		double offsetX, offsetY;
 		double midX = screenWidth / 2, midY = screenHeight / 2;
@@ -112,46 +141,6 @@ public class World {
 
 	public void monsterTurn() {
 		currentRoom.updateMonsters(player);
-	}
-
-	public void movePlayer(int dir) {
-		if (!player.hasTurn())
-			return;
-		// liigutab mängijat
-		if (currentRoom.getFreeDirections((int) player.getX(), (int) player.getY()).contains(dir)) {
-			double oldX = player.getX();
-			double oldY = player.getY();
-			double[] newPos = player.move(dir);
-			player.setTurn(false);
-			timeline = new Timeline(
-					new KeyFrame(Duration.ZERO, new KeyValue(player.xProperty(), oldX),
-							new KeyValue(player.yProperty(), oldY)),
-					new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(player.xProperty(), newPos[0]),
-							new KeyValue(player.yProperty(), newPos[1])));
-			timeline.setOnFinished(event -> {
-				if (player.getX() < 0 || player.getX() >= currentRoom.getWidth() || player.getY() < 0
-						|| player.getY() >= currentRoom.getHeight()) {
-					// Kui mängija liikus kaardist välja, siis see tähendab, et
-					// ta
-					// peab
-					// minema uute ruumi
-					// Leiame selle ja vahetame ruumid ära.
-					Room nextRoom = currentRoom.getNextRoom((int) player.getX(), (int) player.getY(), rooms);
-					if (nextRoom != null)
-						currentRoom = nextRoom;
-					player.setX(currentRoom.getEntranceX());
-					player.setY(currentRoom.getEntranceY());
-				}
-				monsterTurn();
-			});
-			timeline.setAutoReverse(false);
-			timeline.setCycleCount(1);
-			timeline.play();
-		} else {
-			player.setTurn(false);
-			playerAttack(dir);
-			monsterTurn();
-		}
 	}
 
 	public void showPlayerLevels() {
