@@ -2,13 +2,17 @@ package game;
 
 import java.util.Random;
 
+import hud.HitSplat;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class Fighter {
 
 	String name;
 	Random rng = new Random();
+	private DoubleProperty x, y;
 	private int maxHealth;
 	private IntegerProperty health;
 	private int attackPower, attackAccuracy;
@@ -29,6 +33,8 @@ public class Fighter {
 		this.attackAccuracy = attackAccuracy;
 		this.defense = defense;
 		this.agility = agility;
+		this.x = new SimpleDoubleProperty();
+		this.y = new SimpleDoubleProperty();
 	}
 
 	public int attackOther(Fighter o) {
@@ -39,7 +45,7 @@ public class Fighter {
 			return dmg;
 
 		} else {
-			System.out.println(o.getName() + " dodged the attack from " + getName() + ".");
+			Game.hitSplats.add(new HitSplat("DODGED", (o.getX()+0.38)*Game.tileSize, (o.getY()+0.8)*Game.tileSize, Game.before));
 			return 0;
 		}
 	}
@@ -47,8 +53,9 @@ public class Fighter {
 	public void defendFromAttack(int dmg) {
 		if (rng.nextInt(getDefense()) < dmg) {
 			takeDamage(dmg);
+			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize, Game.before));
 		} else {
-			System.out.println(getName() + " successfully blocked the attack.");
+			Game.hitSplats.add(new HitSplat("BLOCKED", (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize, Game.before));
 		}
 	}
 
@@ -75,6 +82,30 @@ public class Fighter {
 		attackAccuracy += 1;
 		defense += 1;
 		agility += 1;
+	}
+	
+	public double getX() {
+		return x.doubleValue();
+	}
+
+	public double getY() {
+		return y.doubleValue();
+	}
+
+	public final DoubleProperty xProperty() {
+		return x;
+	}
+
+	public final DoubleProperty yProperty() {
+		return y;
+	}
+
+	public void setX(double x) {
+		this.x.set(x);
+	}
+
+	public void setY(double y) {
+		this.y.set(y);
 	}
 
 	public int getDefense() {

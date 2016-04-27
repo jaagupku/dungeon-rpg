@@ -17,7 +17,7 @@ import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 
 public class Monster extends Fighter implements Renderable, Movable {
-	private DoubleProperty x, y;
+	
 	private int destinationX, destinationY;
 	private Image img;
 	// monsterStrings ja monsterStats on kahedimensioonilised massiivid.
@@ -35,11 +35,8 @@ public class Monster extends Fighter implements Renderable, Movable {
 	public Monster(int x, int y, int id) {
 		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3], stats.get(id)[4]);
 		this.img = images.get(id);
-		this.x = new SimpleDoubleProperty(x);
-		this.y = new SimpleDoubleProperty(y);
 		setX(x);
 		setY(y);
-
 	}
 
 	private static void reset() {
@@ -105,49 +102,26 @@ public class Monster extends Fighter implements Renderable, Movable {
 		}
 		setDestinationX((int) newX);
 		setDestinationY((int) newY);
-		
+
 		Timeline timeline = new Timeline(
-				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX),
-						new KeyValue(yProperty(), oldY)),
+				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
 				new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(xProperty(), newX),
 						new KeyValue(yProperty(), newY)));
 		timeline.setAutoReverse(false);
 		timeline.setCycleCount(1);
 		return timeline;
 	}
-
-	@Override
-	public double getX() {
-		return x.doubleValue();
-	}
-
-	@Override
-	public double getY() {
-		return y.doubleValue();
-	}
-
-	@Override
-	public final DoubleProperty xProperty() {
-		return x;
-	}
-
-	@Override
-	public final DoubleProperty yProperty() {
-		return y;
-	}
-
-	@Override
+	
 	public void setX(double x) {
+		super.setX(x);
 		destinationX = (int) x;
-		this.x.set(x);
 	}
 
-	@Override
 	public void setY(double y) {
+		super.setY(y);
 		destinationY = (int) y;
-		this.y.set(y);
 	}
-
+	
 	public int getDestinationX() {
 		return destinationX;
 	}

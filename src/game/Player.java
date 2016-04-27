@@ -18,8 +18,8 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public Player(int x, int y, int maxHealth) {
 		super("Player", maxHealth, 10, 7, 3, 3);
-		this.x = new SimpleDoubleProperty(x);
-		this.y = new SimpleDoubleProperty(y);
+		setX(x);
+		setY(y);
 		level = 1;
 		xp = 0;
 		prevXp = 0;
@@ -119,38 +119,6 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public boolean hasTurn() {
 		return hasTurn;
-	}
-
-	@Override
-	public double getX() {
-		return x.doubleValue();
-	}
-
-	@Override
-	public double getY() {
-		return y.doubleValue();
-	}
-
-	@Override
-	public final DoubleProperty xProperty() {
-		return x;
-	}
-
-	@Override
-	public final DoubleProperty yProperty() {
-		return y;
-	}
-
-	@Override
-	public void setX(double x) {
-		this.x.set(x);
-		;
-	}
-
-	@Override
-	public void setY(double y) {
-		this.y.set(y);
-		;
 	}
 
 	@Override

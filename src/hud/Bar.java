@@ -1,5 +1,6 @@
-package game;
+package hud;
 
+import game.Game;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -60,6 +61,7 @@ public class Bar {
 	public void draw(GraphicsContext gc, double x, double y) {
 		Paint prevStroke = gc.getStroke();
 		Paint prevFill = gc.getFill();
+		Font prevFont = gc.getFont();
 		gc.setStroke(Color.BLACK);
 		gc.setLineWidth(2);
 		gc.strokeRect(x, y, width, height);
@@ -75,6 +77,7 @@ public class Bar {
 		gc.fillText(text, textX, textY);
 		gc.setStroke(prevStroke);
 		gc.setFill(prevFill);
+		gc.setFont(prevFont);
 	}
 
 	public void setPosition(double x, double y) {
@@ -92,6 +95,8 @@ public class Bar {
 	}
 
 	public void setValue(double value) {
+		if (value > 1)
+			value = 1;
 		changeableValue.set(value);
 	}
 }

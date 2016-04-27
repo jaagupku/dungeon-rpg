@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import hud.HitSplat;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -53,6 +54,10 @@ public class World {
 		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1]);
+		
+		for(HitSplat hs : Game.hitSplats){
+			hs.draw(gc, offset[0], offset[1]);
+		}
 
 	}
 
