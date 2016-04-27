@@ -19,14 +19,18 @@ public class HitSplat {
 	private DoubleProperty xProperty, yProperty;
 	private Color textColor;
 	private Font font;
-	private long displayUntil;
+	private boolean delete;
+	private int timeMove;
+	private int timeStay;
+	private int timeVisible;
+	private Timeline tl;
 
-	public HitSplat(String text, double x, double y, long displayUntil) {
+	public HitSplat(String text, double x, double y) {
 		super();
 		this.text = text;
 		xProperty = new SimpleDoubleProperty(x);
 		yProperty = new SimpleDoubleProperty(y);
-		this.displayUntil = displayUntil+900_000_000;
+		delete = false;
 		text = text.toUpperCase();
 		if (text.equals("BLOCKED")) {
 			textColor = Color.ROYALBLUE;
@@ -38,25 +42,34 @@ public class HitSplat {
 			textColor = Color.RED;
 			font = Font.font("verdana", FontWeight.BOLD, 22);
 		}
-		
-		Timeline tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(xProperty, x), new KeyValue(yProperty, y)),
-				new KeyFrame(Duration.millis(770), new KeyValue(xProperty, x+7), new KeyValue(yProperty, y-30)));
+		timeVisible = 1200;
+		timeMove = 675;
+		timeStay = timeVisible - timeMove;
+		tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(xProperty, x), new KeyValue(yProperty, y)),
+				new KeyFrame(Duration.millis(timeMove), new KeyValue(xProperty, x + 7),
+						new KeyValue(yProperty, y - 30)),
+				new KeyFrame(Duration.millis(timeMove + timeStay)));
+		tl.setOnFinished(ae -> delete = true);
 		tl.setAutoReverse(false);
 		tl.setCycleCount(1);
 		tl.play();
 	}
 
-	public long getDisplayUntilTime() {
-		return displayUntil;
+	public boolean delete() {
+		return delete;
 	}
 
 	public void draw(GraphicsContext gc, double offsetX, double offsetY) {
 		Paint prevFill = gc.getFill();
 		Font prevFont = gc.getFont();
+		double alpha = (tl.getCurrentTime().toMillis() > timeMove
+				? (tl.getCurrentTime().toMillis() - timeMove) / timeStay : 0);
+		gc.setGlobalAlpha(1 - alpha);
 		gc.setFont(font);
 		gc.setFill(textColor);
-		gc.fillText(text, xProperty.doubleValue()-offsetX, yProperty.doubleValue()-offsetY);
+		gc.fillText(text, xProperty.doubleValue() - offsetX, yProperty.doubleValue() - offsetY);
 		gc.setFill(prevFill);
 		gc.setFont(prevFont);
+		gc.setGlobalAlpha(1);
 	}
 }

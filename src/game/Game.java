@@ -20,7 +20,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import tilemap.TiledMapEncodingException;
@@ -29,13 +28,13 @@ public class Game {
 	private World world;
 	private Canvas canvas;
 	private AnimationTimer timer;
+	private long before = 0;
 	
-	public static long before = 0;
 	public static List<HitSplat> hitSplats;
 	public static Bar healthBar, xpBar;
 	public static int tileSize = 48;
-	public static int moveTime = 200;
-	public static final int TURN_DELAY = 55;
+	public static int moveTime = 400;
+	public static final int TURN_DELAY = 65;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
@@ -81,8 +80,8 @@ public class Game {
 
 		healthBar.draw(gc);
 		xpBar.draw(gc);
-		
-		hitSplats.removeIf(splat -> splat.getDisplayUntilTime() < before);
+
+		hitSplats.removeIf(splat -> splat.delete());
 
 		gc.setFill(Color.WHITE);
 		double currentFps = 1_000_000_000 / delta;

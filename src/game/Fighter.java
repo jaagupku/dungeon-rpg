@@ -45,7 +45,7 @@ public class Fighter {
 			return dmg;
 
 		} else {
-			Game.hitSplats.add(new HitSplat("DODGED", (o.getX()+0.38)*Game.tileSize, (o.getY()+0.8)*Game.tileSize, Game.before));
+			Game.hitSplats.add(new HitSplat("DODGED", (o.getX()+0.38)*Game.tileSize, (o.getY()+0.8)*Game.tileSize));
 			return 0;
 		}
 	}
@@ -53,9 +53,9 @@ public class Fighter {
 	public void defendFromAttack(int dmg) {
 		if (rng.nextInt(getDefense()) < dmg) {
 			takeDamage(dmg);
-			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize, Game.before));
+			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize));
 		} else {
-			Game.hitSplats.add(new HitSplat("BLOCKED", (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize, Game.before));
+			Game.hitSplats.add(new HitSplat("BLOCKED", (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize));
 		}
 	}
 

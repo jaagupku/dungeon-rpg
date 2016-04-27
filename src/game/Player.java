@@ -70,7 +70,7 @@ public class Player extends Fighter implements Renderable, Movable {
 		}
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
-				new KeyFrame(Duration.millis(Game.moveTime), new KeyValue(xProperty(), newX),
+				new KeyFrame(Duration.millis(Game.moveTime * .5), new KeyValue(xProperty(), newX),
 						new KeyValue(yProperty(), newY)));
 		timeline.setAutoReverse(false);
 		timeline.setCycleCount(1);
