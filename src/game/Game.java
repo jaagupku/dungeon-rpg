@@ -29,12 +29,12 @@ public class Game {
 	private Canvas canvas;
 	private AnimationTimer timer;
 	private long before = 0;
-	
+
 	public static List<HitSplat> hitSplats;
 	public static Bar healthBar, xpBar;
 	public static int tileSize = 48;
 	public static int moveTime = 400;
-	public static final int TURN_DELAY = 65;
+	public static final int TURN_DELAY = 20;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);

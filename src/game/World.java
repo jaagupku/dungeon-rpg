@@ -12,14 +12,9 @@ import org.xml.sax.SAXException;
 
 import hud.HitSplat;
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import tilemap.TiledMapEncodingException;
 
@@ -47,7 +42,6 @@ public class World {
 		currentRoom = rooms.get(0);
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
 
-		
 	}
 
 	public void render(Canvas canvas) {
@@ -55,9 +49,7 @@ public class World {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1]);
 		
-		for(HitSplat hs : Game.hitSplats){
-			hs.draw(gc, offset[0], offset[1]);
-		}
+		Game.hitSplats.forEach(elem -> elem.draw(gc, offset[0], offset[1]));
 
 	}
 

@@ -92,9 +92,7 @@ public class Room {
 		renderOrder.addAll(monsters);
 		renderOrder.add(player);
 		
-		for (Renderable d : renderOrder) {
-			d.render(gc, offsetX, offsetY);
-		}
+		renderOrder.forEach(elem -> elem.render(gc, offsetX, offsetY));
 	}
 
 	public Monster getMonsterAt(int x, int y) {
