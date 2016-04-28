@@ -1,6 +1,5 @@
 package hud;
 
-import game.Game;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -41,11 +40,7 @@ public class Bar {
 		value = new SimpleDoubleProperty();
 		changeableValue = new SimpleDoubleProperty();
 		changeableValue.addListener((obs, oldV, newV) -> {
-			int time;
-			if (Game.moveTime * 2 + Game.TURN_DELAY < 222)
-				time = Game.moveTime * 2;
-			else
-				time = 222;
+			int time = 222;
 			Timeline tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(value, oldV)),
 					new KeyFrame(Duration.millis(time), new KeyValue(value, newV)));
 			tl.setCycleCount(1);

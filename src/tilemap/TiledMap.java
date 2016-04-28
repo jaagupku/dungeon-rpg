@@ -23,17 +23,15 @@ import javafx.scene.image.WritableImage;
 
 public class TiledMap implements Renderable {
 
-	private int width, height, layersAmount;
-	private List<Image> tileSheet;
+	private int width, height;
 	private List<Node> objects;
 	private TileLayer collisionLayer;
 	private TileLayer[] layers;
-	// private byte[][] collisionLayer;
-	// private byte[][][] layerTiles; // layers[x][y][layerId]
+	private List<Image> tileSheet = new ArrayList<Image>();
 
 	public TiledMap(File file)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
-		tileSheet = new ArrayList<Image>();
+		// tileSheet = new ArrayList<Image>();
 		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
 		doc.getDocumentElement().normalize();
@@ -96,26 +94,18 @@ public class TiledMap implements Renderable {
 			int columns = Integer.parseInt(e.getAttribute("columns"));
 			Element imageData = (Element) n.getChildNodes().item(1);
 			String sheetPath = imageData.getAttribute("source").replace("../", "");
-			Image imgSheet = new Image(sheetPath);
-			for (int tCount = 0; tCount < tileCount; tCount++) {
-				int x = tCount % columns * Game.tileSize;
-				int y = tCount / columns * Game.tileSize;
-				WritableImage wi = new WritableImage(imgSheet.getPixelReader(), x, y, Game.tileSize, Game.tileSize);
-				tileSheet.add(wi);
-			}
+			tileSheet.addAll(loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Game.scale));
 		}
 	}
 
 	private void loadLayers(List<Node> layers) throws TiledMapEncodingException {
 		int layerCounter = 0;
 		for (Node n : layers) {
-			this.layers[layerCounter] = new TileLayer(n);
+			this.layers[layerCounter] = new TileLayer(n, tileSheet);
 			if (((Element) n).getAttribute("name").equals("collision"))
 				collisionLayer = this.layers[layerCounter];
-			this.layers[layerCounter].renderTilesOnImage(tileSheet);
 			layerCounter++;
 		}
-		layersAmount = layerCounter;
 	}
 
 	public List<Node> getObjects() {
@@ -147,5 +137,26 @@ public class TiledMap implements Renderable {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public static List<Image> loadImagesFromTilesheet(String path, int tileCount, int columns, int tileSize,
+			double scale) {
+		List<Image> sheet = new ArrayList<Image>();
+
+		Image sheetImgNotResized = new Image(path);
+		Image sheetImg = new Image(path, Math.round(scale * sheetImgNotResized.getWidth()),
+				Math.round(scale * sheetImgNotResized.getHeight()), true, false);
+
+		for (int tCount = 0; tCount < tileCount; tCount++) {
+			int x = (int) ((tCount % columns) * tileSize * scale);
+			int y = (int) ((tCount / columns) * tileSize * scale);
+			int width = (int) (tileSize * Game.scale);
+			int height = (int) (tileSize * Game.scale);
+
+			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
+			sheet.add((Image) wi);
+		}
+
+		return sheet;
 	}
 }

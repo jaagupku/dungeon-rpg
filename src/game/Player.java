@@ -3,14 +3,11 @@ package game;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class Player extends Fighter implements Renderable, Movable {
-	private DoubleProperty x, y;
 	private int xp, level, nextXp, prevXp;
 	private Image img;
 	private boolean hasTurn;
@@ -24,7 +21,7 @@ public class Player extends Fighter implements Renderable, Movable {
 		xp = 0;
 		prevXp = 0;
 		nextXp = xpToNextLevel();
-		img = new Image("player.png");
+		img = new Image("player.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
 		Game.healthBar.setText(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));

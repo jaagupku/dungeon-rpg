@@ -9,17 +9,14 @@ import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
+import tilemap.TiledMap;
 
 public class Monster extends Fighter implements Renderable, Movable {
-	
-	private int destinationX, destinationY;
-	private Image img;
+
+	private int destinationX, destinationY, id;
 	// monsterStrings ja monsterStats on kahedimensioonilised massiivid.
 	// monster______[id][tunnus]
 	// monsterStrings'il on {"koletise nimi", "kahe täheline string, mis on
@@ -34,7 +31,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 
 	public Monster(int x, int y, int id) {
 		super(names.get(id), stats.get(id)[0], stats.get(id)[1], stats.get(id)[2], stats.get(id)[3], stats.get(id)[4]);
-		this.img = images.get(id);
+		this.id = id;
 		setX(x);
 		setY(y);
 	}
@@ -61,20 +58,16 @@ public class Monster extends Fighter implements Renderable, Movable {
 			stats.add(stat);
 		}
 		sc.close();
-		Image sheetImg = new Image("objects_sheet.png");
-		int sheetSizeX = (int) (sheetImg.getWidth() / Game.tileSize);
-		for (int tileCounter = 0; tileCounter < names.size(); tileCounter++) {
-			int x = (tileCounter % sheetSizeX) * Game.tileSize;
-			int y = (tileCounter / sheetSizeX) * Game.tileSize;
-			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, Game.tileSize, Game.tileSize);
-			images.add((Image) wi);
-		}
+	}
+
+	static void loadMonsterImages() {
+		images = TiledMap.loadImagesFromTilesheet("objects_sheet.png", names.size(), 4, Game.tileSize, Game.scale);
 
 	}
 
 	@Override
 	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(img, getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
+		gc.drawImage(images.get(id), getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
 	}
 
 	@Override
@@ -105,13 +98,13 @@ public class Monster extends Fighter implements Renderable, Movable {
 
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
-				new KeyFrame(Duration.millis(Game.moveTime*.7), new KeyValue(xProperty(), newX),
+				new KeyFrame(Duration.millis(Game.moveTime * .7), new KeyValue(xProperty(), newX),
 						new KeyValue(yProperty(), newY)));
 		timeline.setAutoReverse(false);
 		timeline.setCycleCount(1);
 		return timeline;
 	}
-	
+
 	public void setX(double x) {
 		super.setX(x);
 		destinationX = (int) x;
@@ -121,7 +114,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 		super.setY(y);
 		destinationY = (int) y;
 	}
-	
+
 	public int getDestinationX() {
 		return destinationX;
 	}

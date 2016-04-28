@@ -32,8 +32,9 @@ public class Game {
 
 	public static List<HitSplat> hitSplats;
 	public static Bar healthBar, xpBar;
-	public static int tileSize = 48;
-	public static int moveTime = 400;
+	public static int tileSize;
+	public static final double scale = Math.sqrt(Math.pow(Main.windowWidth, 2) + Math.pow(Main.windowHeight, 2)) / 1000;
+	public static final int moveTime = 400;
 	public static final int TURN_DELAY = 20;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
@@ -55,8 +56,6 @@ public class Game {
 		});
 		hitSplats = new ArrayList<HitSplat>();
 
-		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
-
 		double xpWidth = 0.875 * canvas.getWidth();
 		double xpHeight = 0.0166 * canvas.getHeight();
 		double xpX = (canvas.getWidth() - xpWidth) / 2;
@@ -69,7 +68,10 @@ public class Game {
 		double hpY = canvas.getHeight() - hpHeight - xpHeight - 2;
 		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.RED);
 
+		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
 		world = new World();
+		Monster.loadMonsterImages();
+		Game.tileSize *= Game.scale;
 	}
 
 	private void render(long delta) {

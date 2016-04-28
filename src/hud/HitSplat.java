@@ -1,5 +1,6 @@
 package hud;
 
+import game.Game;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -34,20 +35,22 @@ public class HitSplat {
 		text = text.toUpperCase();
 		if (text.equals("BLOCKED")) {
 			textColor = Color.ROYALBLUE;
-			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20);
+			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20 * Game.scale);
 		} else if (text.equals("DODGED")) {
 			textColor = Color.CORAL;
-			font = Font.font("verdana", FontPosture.ITALIC, 20);
+			font = Font.font("verdana", FontPosture.ITALIC, 20 * Game.scale);
 		} else {
 			textColor = Color.RED;
-			font = Font.font("verdana", FontWeight.BOLD, 22);
+			font = Font.font("verdana", FontWeight.BOLD, 22 * Game.scale);
 		}
 		timeVisible = 1200;
 		timeMove = 675;
 		timeStay = timeVisible - timeMove;
+		double moveYdir = -(30d / 48) * Game.tileSize;
+		double moveXdir = (7d / 48) * Game.tileSize;
 		tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(xProperty, x), new KeyValue(yProperty, y)),
-				new KeyFrame(Duration.millis(timeMove), new KeyValue(xProperty, x + 7),
-						new KeyValue(yProperty, y - 30)),
+				new KeyFrame(Duration.millis(timeMove), new KeyValue(xProperty, x + moveXdir),
+						new KeyValue(yProperty, y + moveYdir)),
 				new KeyFrame(Duration.millis(timeMove + timeStay)));
 		tl.setOnFinished(ae -> delete = true);
 		tl.setAutoReverse(false);
