@@ -3,6 +3,7 @@ package game;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
@@ -43,28 +44,12 @@ public class Player extends Fighter implements Renderable, Movable {
 	}
 
 	@Override
-	public Timeline move(int dir) {
+	public Timeline move(Direction dir) {
 		double oldX = getX();
 		double oldY = getY();
-		double newX = getX(), newY = getY();
-		switch (dir) {
-		case World.NORTH: {
-			newY = getY() - 1;
-			break;
-		}
-		case World.SOUTH: {
-			newY = getY() + 1;
-			break;
-		}
-		case World.WEST: {
-			newX = getX() - 1;
-			break;
-		}
-		case World.EAST: {
-			newX = getX() + 1;
-			break;
-		}
-		}
+		Point2D newCoords = Direction.getCoordinates(dir, new Point2D(oldX, oldY));
+		double newX = newCoords.getX(), newY = newCoords.getY();
+		
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
 				new KeyFrame(Duration.millis(Game.moveTime * .5), new KeyValue(xProperty(), newX),

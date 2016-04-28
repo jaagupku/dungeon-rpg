@@ -17,5 +17,5 @@ public interface Movable {
 
 	void setY(double y);
 
-	Timeline move(int dir);
+	Timeline move(Direction dir);
 }

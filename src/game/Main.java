@@ -75,10 +75,6 @@ public class Main extends Application {
 	private Scene getDefaultScene(Stage stage, Parent root) {
 		Scene scene = new Scene(root, windowWidth, windowHeight);
 		root.setId("pane");
-		// scene.heightProperty().addListener((ov, oldValue, newValue) ->
-		// windowHeight = newValue.intValue());
-		// scene.widthProperty().addListener((ov, oldValue, newValue) ->
-		// windowWidth = newValue.intValue());
 		scene.getStylesheets().add(getClass().getResource("/menu.css").toExternalForm());
 		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + windowWidth
 				+ "px " + windowHeight + "px;");
@@ -93,8 +89,6 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Scene menu = getMenuScene(primaryStage);
-		// primaryStage.setMinWidth(640);
-		// primaryStage.setMinHeight(480);
 		primaryStage.setResizable(false);
 		primaryStage.setScene(menu);
 		primaryStage.setTitle("Dungeon the RPG");

@@ -28,11 +28,11 @@ public class Room {
 	private TiledMap map;
 	private Random rng = new Random();
 
-	public Room(File file) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+	public Room(TiledMap tMap) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		monsters = new ArrayList<Monster>();
 		items = new ArrayList<Item>();
 		connections = new ArrayList<Connection>();
-		map = new TiledMap(file);
+		map = tMap;
 		List<Node> objects = map.getObjects();
 		for (Node n : objects) {
 			Element e = (Element) n;
@@ -114,15 +114,15 @@ public class Room {
 			// suvaliselt ringi.
 			// Kui mitte siis seisab niisama või ründab mängijat.
 			if (distanceFromPlayerSquared > 2) {
-				List<Integer> freeDirections = getFreeDirections((int) m.getX(), (int) m.getY());
+				List<Direction> freeDirections = Direction.getFreeDirections(this, (int) m.getX(), (int) m.getY());
 				if (m.getY() <= 0)
-					freeDirections.remove((Integer) World.NORTH);
+					freeDirections.remove(Direction.NORTH);
 				else if (m.getY() >= getHeight() - 1)
-					freeDirections.remove((Integer) World.SOUTH);
+					freeDirections.remove(Direction.SOUTH);
 				if (m.getX() <= 0)
-					freeDirections.remove((Integer) World.WEST);
+					freeDirections.remove(Direction.WEST);
 				else if (m.getX() >= getWidth() - 1)
-					freeDirections.remove((Integer) World.EAST);
+					freeDirections.remove(Direction.EAST);
 				if (freeDirections.size() > 0) {
 					Timeline timeline = m.move(freeDirections.get(rng.nextInt(freeDirections.size())));
 					timeline.play();
@@ -132,19 +132,6 @@ public class Room {
 			}
 		}
 		player.setTurn(true);
-	}
-
-	public List<Integer> getFreeDirections(int x, int y) {
-		List<Integer> freeDirections = new ArrayList<Integer>();
-		if (isCellEmpty(x, y - 1))
-			freeDirections.add(World.NORTH);
-		if (isCellEmpty(x, y + 1))
-			freeDirections.add(World.SOUTH);
-		if (isCellEmpty(x - 1, y))
-			freeDirections.add(World.WEST);
-		if (isCellEmpty(x + 1, y))
-			freeDirections.add(World.EAST);
-		return freeDirections;
 	}
 
 	public Room getNextRoom(int x, int y, List<Room> others) {

@@ -43,13 +43,13 @@ public class Game {
 		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
 				if (event.getCode() == KeyCode.W) {
-					world.movePlayer(World.NORTH);
+					world.movePlayer(Direction.NORTH);
 				} else if (event.getCode() == KeyCode.S) {
-					world.movePlayer(World.SOUTH);
+					world.movePlayer(Direction.SOUTH);
 				} else if (event.getCode() == KeyCode.A) {
-					world.movePlayer(World.WEST);
+					world.movePlayer(Direction.WEST);
 				} else if (event.getCode() == KeyCode.D) {
-					world.movePlayer(World.EAST);
+					world.movePlayer(Direction.EAST);
 				}
 				event.consume();
 			}

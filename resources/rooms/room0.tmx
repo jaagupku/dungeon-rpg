@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="48" tileheight="48" nextobjectid="19">
+ <properties>
+  <property name="testBool" type="bool" value="true"/>
+  <property name="testFloat" type="float" value="4.54"/>
+  <property name="testInteger" type="int" value="43"/>
+  <property name="testStr" value="hello world"/>
+ </properties>
  <tileset firstgid="1" name="background" tilewidth="48" tileheight="48" tilecount="4" columns="2">
   <image source="../tilesheet.png" width="96" height="96"/>
  </tileset>

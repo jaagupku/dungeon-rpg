@@ -3,7 +3,9 @@ package tilemap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +29,7 @@ public class TiledMap implements Renderable {
 	private List<Node> objects;
 	private TileLayer collisionLayer;
 	private TileLayer[] layers;
+	private Map<String, Object> properties;
 	private List<Image> tileSheet = new ArrayList<Image>();
 
 	public TiledMap(File file)
@@ -39,6 +42,7 @@ public class TiledMap implements Renderable {
 		width = Integer.parseInt(((Element) root).getAttribute("width"));
 		height = Integer.parseInt(((Element) root).getAttribute("height"));
 		objects = new ArrayList<Node>();
+		properties = new HashMap<>();
 		Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
 		NodeList rootChilds = root.getChildNodes();
 		ArrayList<Node> tilesetNodes = new ArrayList<Node>();
@@ -69,7 +73,7 @@ public class TiledMap implements Renderable {
 		loadTileSets(tilesetNodes);
 		loadLayers(layerNodes);
 		loadObjects(objectGroupNodes);
-
+		loadProperties(mapProperties);
 	}
 
 	private void loadObjects(List<Node> objectGroupNodes) {
@@ -83,6 +87,39 @@ public class TiledMap implements Renderable {
 			}
 		}
 
+	}
+
+	private void loadProperties(List<Node> propertyNodes) {
+		for (Node n : propertyNodes) {
+			NodeList nList = n.getChildNodes();
+			for (int i = 0; i < nList.getLength(); i++) {
+				if (nList.item(i).getNodeType() != Node.ELEMENT_NODE)
+					continue;
+				Element e = (Element) nList.item(i);
+				String variableName = e.getAttribute("name");
+				String variableType = e.getAttribute("type");
+				String variableValue = e.getAttribute("value");
+				Object o;
+				switch (variableType) {
+				case "int": {
+					o = new Integer(Integer.parseInt(variableValue));
+					break;
+				}
+				case "float": {
+					o = new Float(Float.parseFloat(variableValue));
+					break;
+				}
+				case "bool": {
+					o = new Boolean(Boolean.parseBoolean(variableValue));
+					break;
+				}
+				default: {
+					o = new String(variableValue);
+				}
+				}
+				properties.put(variableName, o);
+			}
+		}
 	}
 
 	private void loadTileSets(List<Node> sheets) {
@@ -129,6 +166,10 @@ public class TiledMap implements Renderable {
 
 	public boolean isEmpty(int x, int y) {
 		return collisionLayer.getTile(x, y) == -1;
+	}
+
+	public final Map<String, Object> getProperties() {
+		return properties;
 	}
 
 	public int getWidth() {

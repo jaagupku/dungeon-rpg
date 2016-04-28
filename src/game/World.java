@@ -4,29 +4,33 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import hud.HitSplat;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
+import tilemap.TiledMap;
 import tilemap.TiledMapEncodingException;
 
 public class World {
-	public static final int NORTH = 0, SOUTH = 1, WEST = 2, EAST = 3; // Directions
 	public static final int PLAYER_LOSE = 6, GAME_NOT_OVER = 7, PLAYER_WIN = 8;
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
+	private Map<String, Object> gameProperties;
 
 	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
+		gameProperties = new HashMap<>();
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
 		// "room<number>.txt"
@@ -34,9 +38,14 @@ public class World {
 			f = new File("resources\\rooms\\room" + counter + ".tmx");
 			if (!f.exists())
 				break;
-			rooms.add(new Room(f));
+			TiledMap tm = new TiledMap(f);
+			gameProperties.putAll(tm.getProperties());
+			rooms.add(new Room(tm));
 			counter++;
 		}
+		gameProperties.put("testInteger",
+				(int) gameProperties.get("testInteger") + (int) gameProperties.get("intTest"));
+		System.out.println(gameProperties);
 		if (rooms.size() == 0)
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
@@ -48,17 +57,17 @@ public class World {
 		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1]);
-		
+
 		Game.hitSplats.forEach(elem -> elem.draw(gc, offset[0], offset[1]));
 
 	}
 
-	public void movePlayer(int dir) {
+	public void movePlayer(Direction dir) {
 		if (!player.hasTurn())
 			return;
 		// liigutab mängijat
 		player.setTurn(false);
-		if (currentRoom.getFreeDirections((int) player.getX(), (int) player.getY()).contains(dir)) {
+		if (Direction.getFreeDirections(currentRoom, (int) player.getX(), (int) player.getY()).contains(dir)) {
 
 			Timeline timeline = player.move(dir);
 			timeline.setOnFinished(event -> {
@@ -89,32 +98,9 @@ public class World {
 		}
 	}
 
-	public void playerAttack(int dir) {
-		int x = 0;
-		int y = 0;
-		switch (dir) {
-		case World.NORTH: {
-			x = (int) player.getX();
-			y = (int) (player.getY() - 1);
-			break;
-		}
-		case World.SOUTH: {
-			x = (int) player.getX();
-			y = (int) (player.getY() + 1);
-			break;
-		}
-		case World.WEST: {
-			x = (int) (player.getX() - 1);
-			y = (int) player.getY();
-			break;
-		}
-		case World.EAST: {
-			x = (int) (player.getX() + 1);
-			y = (int) player.getY();
-			break;
-		}
-		}
-		Monster m = currentRoom.getMonsterAt(x, y);
+	public void playerAttack(Direction dir) {
+		Point2D coords = Direction.getCoordinates(dir, new Point2D(player.getX(), player.getY()));
+		Monster m = currentRoom.getMonsterAt((int) coords.getX(), (int) coords.getY());
 		if (m != null) {
 			player.addXp(player.attackOther(m));
 		}
