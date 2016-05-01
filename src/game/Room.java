@@ -1,6 +1,5 @@
 package game;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +11,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.util.Duration;
 import tilemap.TiledMap;
 import tilemap.TiledMapEncodingException;
 
+/**
+ * 
+ *
+ */
 public class Room {
 	private List<Monster> monsters;
 	private List<Item> items;
@@ -27,8 +27,17 @@ public class Room {
 	private int entranceX, entranceY;
 	private TiledMap map;
 	private Random rng = new Random();
-
-	public Room(TiledMap tMap) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+	
+	/**
+	 * Creates and fills new room from {@link TiledMap} object.
+	 * @param tMap - tiledmap
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws TiledMapEncodingException
+	 */
+	public Room(TiledMap tMap)
+			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		monsters = new ArrayList<Monster>();
 		items = new ArrayList<Item>();
 		connections = new ArrayList<Connection>();
@@ -61,6 +70,15 @@ public class Room {
 		}
 	}
 
+	/**
+	 * Returns true if cell at (x, y) is empty and false if it is not.
+	 * 
+	 * @param x
+	 *            - x coordinate
+	 * @param y
+	 *            - y coordinate
+	 * @return boolean
+	 */
 	public boolean isCellEmpty(int x, int y) {
 		if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
 			// kaardist väljaspool olev rakk on tühi, siis kui see ühendab
@@ -81,20 +99,42 @@ public class Room {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
+	/**
+	 * Renders room using given {@link GraphicsContext}
+	 * 
+	 * @param gc
+	 *            - GraphicsContext
+	 * @param player
+	 *            - player
+	 * @param offsetX
+	 *            - x offset of scene
+	 * @param offsetY
+	 *            - y offset of scene
+	 */
 	public void render(GraphicsContext gc, Player player, double offsetX, double offsetY) {
 		List<Renderable> renderOrder = new ArrayList<Renderable>();
-		
+
 		renderOrder.add(map);
 		renderOrder.addAll(items);
 		renderOrder.addAll(monsters);
 		renderOrder.add(player);
-		
+
 		renderOrder.forEach(elem -> elem.render(gc, offsetX, offsetY));
 	}
 
+	/**
+	 * Gets monster at (x, y) or null of there are no monsters.
+	 * 
+	 * @param x
+	 *            - x coordinate
+	 * @param y
+	 *            - y coordinate
+	 * @return Monster or null
+	 */
 	public Monster getMonsterAt(int x, int y) {
 		for (Monster m : monsters) {
 			if (m.getX() == x && m.getY() == y)
@@ -103,6 +143,13 @@ public class Room {
 		return null;
 	}
 
+	/**
+	 * Updates all monsters in the room by moving them or attacking the
+	 * {@link Player}
+	 * 
+	 * @param player
+	 *            - {@link Player}
+	 */
 	public void updateMonsters(Player player) {
 
 		// Eemaldab kõik surnud koletised listist.
@@ -134,6 +181,19 @@ public class Room {
 		player.setTurn(true);
 	}
 
+	/**
+	 * Looks for a {@link Connection} at (x, y) coordinates. If found then
+	 * searches that connection from other rooms. If found then returns that
+	 * other room, else returns null.
+	 * 
+	 * @param x
+	 *            - x coordinate of a {@link Player}
+	 * @param y
+	 *            - y coordinate of a {@link Player}
+	 * @param others
+	 *            - other {@link Room}s
+	 * @return the room connected to current room.
+	 */
 	public Room getNextRoom(int x, int y, List<Room> others) {
 		// getNextRoom otsib üles ühenduse ja siis tagastab teise ruumi, kus on
 		// ka see sama ühenduse nimi.
@@ -159,33 +219,57 @@ public class Room {
 				return r; // Tagastame uue ruumi.
 			}
 		}
-		return null; // Kui ruumi ei leidnud siis tagastame nulli.
+		return null;
 	}
 
 	private List<Connection> getConnections() {
 		return connections;
 	}
-
+	
+	/**
+	 * Gets the width of room
+	 * @return Width of the room
+	 */
 	public int getWidth() {
 		return map.getWidth();
 	}
 
+	/**
+	 * Gets the height of the room
+	 * @return height of the room
+	 */
 	public int getHeight() {
 		return map.getHeight();
 	}
 
+	/**
+	 * Gets x coordinate of the entrance to the room
+	 * @return x coordinate of the entrance
+	 */
 	public int getEntranceX() {
 		return entranceX;
 	}
 
+	/**
+	 * Gets y coordinate of the entrance to the room
+	 * @return y coordinate of the entrance
+	 */
 	public int getEntranceY() {
 		return entranceY;
 	}
 
+	/**
+	 * Gets the number of monsters in the room.
+	 * @return number of monsters
+	 */
 	public int getNumberOfMonsters() {
 		return monsters.size();
 	}
 
+	/**
+	 * Sets the entrance of room.
+	 * @param entranceX - x coordinate
+	 */
 	private void setEntranceX(int entranceX) {
 		if (entranceX < 0)
 			this.entranceX = 0;
@@ -195,6 +279,10 @@ public class Room {
 			this.entranceX = entranceX;
 	}
 
+	/**
+	 * Sets the entrance of room.
+	 * @param entranceY - y coordinate
+	 */
 	private void setEntranceY(int entranceY) {
 		if (entranceY < 0)
 			this.entranceY = 0;
@@ -246,6 +334,11 @@ public class Room {
 			return name;
 		}
 
+		/**
+		 * Returns x coordinate within rooms width.
+		 * 
+		 * @return x coordinate
+		 */
 		public int getX() {
 			// Tagastab koordinaadid, mis on kaardi sees.
 			if (x == -1) {
@@ -256,8 +349,12 @@ public class Room {
 			return x;
 		}
 
+		/**
+		 * Returns y coordinate within rooms height.
+		 * 
+		 * @return y coordinate
+		 */
 		public int getY() {
-			// Tagastab koordinaadid, mis on kaardi sees.
 			if (y == -1) {
 				return y + 1;
 			} else if (y == getHeight()) {

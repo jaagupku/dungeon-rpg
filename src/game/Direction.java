@@ -7,7 +7,14 @@ import javafx.geometry.Point2D;
 
 public enum Direction {
 	NORTH, SOUTH, WEST, EAST;
-
+	
+	
+	/**
+	 * Gets direction, point and returns new point.
+	 * @param dir - direction to new coordinates
+	 * @param coords - current coordinates
+	 * @return New coordinates
+	 */
 	public static Point2D getCoordinates(Direction dir, Point2D coords) {
 		Point2D newCoords = coords;
 		switch (dir) {
@@ -30,16 +37,23 @@ public enum Direction {
 		}
 		return newCoords;
 	}
-
-	public static List<Direction> getFreeDirections(Room r, int x, int y) {
+	
+	/**
+	 * Returns list of free directions at certain tile in a room.
+	 * @param room - a room where free directions are searched
+	 * @param x - x coordinate of a tile
+	 * @param y - y coordinate of a tile
+	 * @return List of free directions at (x, y) from room.
+	 */
+	public static List<Direction> getFreeDirections(Room room, int x, int y) {
 		List<Direction> freeDirections = new ArrayList<Direction>();
-		if (r.isCellEmpty(x, y - 1))
+		if (room.isCellEmpty(x, y - 1))
 			freeDirections.add(NORTH);
-		if (r.isCellEmpty(x, y + 1))
+		if (room.isCellEmpty(x, y + 1))
 			freeDirections.add(SOUTH);
-		if (r.isCellEmpty(x - 1, y))
+		if (room.isCellEmpty(x - 1, y))
 			freeDirections.add(WEST);
-		if (r.isCellEmpty(x + 1, y))
+		if (room.isCellEmpty(x + 1, y))
 			freeDirections.add(EAST);
 		return freeDirections;
 	}

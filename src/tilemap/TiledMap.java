@@ -34,16 +34,36 @@ public class TiledMap implements Renderable {
 
 	public TiledMap(File file)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
-		// tileSheet = new ArrayList<Image>();
-		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
-		doc.getDocumentElement().normalize();
-		Node root = doc.getDocumentElement();
+		Node root = getRootNode(file);
 		width = Integer.parseInt(((Element) root).getAttribute("width"));
 		height = Integer.parseInt(((Element) root).getAttribute("height"));
 		objects = new ArrayList<Node>();
 		properties = new HashMap<>();
 		Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
+		loadTiledMap(root);
+	}
+	
+	/**
+	 * Gets root node of the TMX map file.
+	 * @param file - map file
+	 * @return root node of map
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private Node getRootNode(File file) throws ParserConfigurationException, SAXException, IOException{
+		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = dBuilder.parse(file);
+		doc.getDocumentElement().normalize();
+		return doc.getDocumentElement();
+	}
+	
+	/**
+	 * Loads tilesets, layers, objects and map properties.
+	 * @param root - root node of map
+	 * @throws TiledMapEncodingException
+	 */
+	private void loadTiledMap(Node root) throws TiledMapEncodingException{
 		NodeList rootChilds = root.getChildNodes();
 		ArrayList<Node> tilesetNodes = new ArrayList<Node>();
 		ArrayList<Node> layerNodes = new ArrayList<Node>();
@@ -149,10 +169,25 @@ public class TiledMap implements Renderable {
 		return objects;
 	}
 
+	/**
+	 * Renders specified layer.
+	 * @param gc - GraphicsContext
+	 * @param offsetX - x offset
+	 * @param offsetY - y offset
+	 * @param layer - layer id
+	 */
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int layer) {
 		layers[layer].render(gc, offsetX, offsetY);
 	}
 
+	/**
+	 * Renders layers in range [from, to)
+	 * @param gc - GraphicsContext
+	 * @param offsetX - x offset
+	 * @param offsetY - y offset
+	 * @param from - Start layer id
+	 * @param to - End layer id
+	 */
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int from, int to) {
 		for (int layer = from; layer < to; layer++)
 			layers[layer].render(gc, offsetX, offsetY);
@@ -180,6 +215,15 @@ public class TiledMap implements Renderable {
 		return height;
 	}
 
+	/**
+	 * Loads and rescales images from tilesheet at specified path and returns images as a list.
+	 * @param path - Path as a string for the tilesheet
+	 * @param tileCount - number of tiles in the sheet
+	 * @param columns - number of columns in a tilesheet
+	 * @param tileSize - tile size, tile width = tile height
+	 * @param scale - scale factor
+	 * @return list of rescaled images.
+	 */
 	public static List<Image> loadImagesFromTilesheet(String path, int tileCount, int columns, int tileSize,
 			double scale) {
 		List<Image> sheet = new ArrayList<Image>();

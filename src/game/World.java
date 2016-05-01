@@ -53,6 +53,10 @@ public class World {
 
 	}
 
+	/**
+	 * Renders world on canvas.
+	 * @param canvas
+	 */
 	public void render(Canvas canvas) {
 		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
 		GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -106,6 +110,12 @@ public class World {
 		}
 	}
 
+	/**
+	 * Calculates offset from screen and player.
+	 * @param screenWidth - Width of the canvas
+	 * @param screenHeight - Height of the canvas
+	 * @return {offsetX, offsetY}
+	 */
 	private double[] getOffset(double screenWidth, double screenHeight) {
 		double offsetX, offsetY;
 		double midX = screenWidth / 2, midY = screenHeight / 2;
@@ -135,10 +145,6 @@ public class World {
 
 	public void monsterTurn() {
 		currentRoom.updateMonsters(player);
-	}
-
-	public void showPlayerLevels() {
-		System.out.println(player.toString());
 	}
 
 	public int getGameState() {
