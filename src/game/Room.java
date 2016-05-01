@@ -216,10 +216,16 @@ public class Room {
 				// ühenduse koordinaadid.
 				r.setEntranceX(r.getConnections().get(newIndex).getX());
 				r.setEntranceY(r.getConnections().get(newIndex).getY());
+				map.stopAnimations();
+				r.resumeAnimations();
 				return r; // Tagastame uue ruumi.
 			}
 		}
 		return null;
+	}
+	
+	void resumeAnimations(){
+		map.playAnimations();
 	}
 
 	private List<Connection> getConnections() {
@@ -362,5 +368,9 @@ public class Room {
 			}
 			return y;
 		}
+	}
+
+	public void stopAnimations() {
+		map.stopAnimations();
 	}
 }

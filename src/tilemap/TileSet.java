@@ -15,11 +15,13 @@ import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 
 public class TileSet {
-	int tileWidth, tileHeight, tileCount, columns, firstGid;
-	Image[] tileSheet;
+	private int tileWidth, tileHeight, tileCount, columns, firstGid;
+	private Image[] tileSheet;
+	private List<Animation> animations;
 
 	public TileSet(Node n) {
 		super();
+		animations = new ArrayList<Animation>();
 		Element e = (Element) n;
 		tileWidth = Integer.parseInt(e.getAttribute("tilewidth"));
 		tileHeight = Integer.parseInt(e.getAttribute("tileheight"));
@@ -33,14 +35,17 @@ public class TileSet {
 		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Game.scale)
 				.toArray(tileSheet);
 		setUpAnimatedTiles(childNodes);
-		
+		System.out.println(firstGid);
+
 	}
-	
+
 	/**
 	 * Reads in animation details and starts playing it.
-	 * @param childNodes - tileset childnodes.
+	 * 
+	 * @param childNodes
+	 *            - tileset childnodes.
 	 */
-	private void setUpAnimatedTiles(NodeList childNodes){
+	private void setUpAnimatedTiles(NodeList childNodes) {
 		for (int i = 0; i < childNodes.getLength(); i++) {
 			if (!childNodes.item(i).getNodeName().equals("tile"))
 				continue;
@@ -59,21 +64,27 @@ public class TileSet {
 					int duration = Integer.parseInt(eFrame.getAttribute("duration"));
 					animation.addFrame(tileid, duration);
 				}
-				animation.play();
+				animations.add(animation);
 			}
 		}
+	}
+	
+	List<Animation> getAnimations(){
+		return animations;
 	}
 
 	/**
 	 * Gets image
-	 * @param gid - Global id
+	 * 
+	 * @param gid
+	 *            - Global id
 	 * @return image
 	 */
-	public Image get(int gid) {
+	public final Image get(int gid) {
 		return tileSheet[gid - firstGid];
 	}
 
-	public int getFirstGid() {
+	int getFirstGid() {
 		return firstGid;
 	}
 
@@ -102,10 +113,10 @@ public class TileSet {
 				Math.round(scale * sheetImgNotResized.getHeight()), true, false);
 
 		for (int tCount = 0; tCount < tileCount; tCount++) {
-			int x = (int) ((tCount % columns) * tileSize * scale);
-			int y = (int) ((tCount / columns) * tileSize * scale);
-			int width = (int) (tileSize * Game.scale);
-			int height = (int) (tileSize * Game.scale);
+			int x = (int) Math.ceil((tCount % columns) * tileSize * scale);
+			int y = (int) Math.round((tCount / columns) * tileSize * scale);
+			int width = (int) Math.round(tileSize * Game.scale);
+			int height = (int) Math.round(tileSize * Game.scale);
 
 			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
 			sheet.add((Image) wi);
@@ -118,7 +129,7 @@ public class TileSet {
 	 * Animation class holds animations frame id's and durations.
 	 *
 	 */
-	private class Animation {
+	class Animation {
 
 		private Image thisImg;
 		private int tileid;
@@ -131,10 +142,10 @@ public class TileSet {
 		}
 
 		private int getNextFrame(int current) {
-			return (current < frames.size()-1 ? current+1 : 0);
+			return (current < frames.size() - 1 ? current + 1 : 0);
 		}
 
-		public void addFrame(int tileid, int duration) {
+		void addFrame(int tileid, int duration) {
 			int current = frames.size();
 			Timeline tl = new Timeline(new KeyFrame(Duration.millis(duration)));
 			tl.setAutoReverse(false);
@@ -145,15 +156,19 @@ public class TileSet {
 			});
 			frames.add(tl);
 		}
-		
-		public void play(){
+
+		void play() {
 			frames.get(0).play();
 		}
-		
-		public void stop(){
-			for(Timeline tl : frames){
+
+		void stop() {
+			for (Timeline tl : frames) {
 				tl.stop();
 			}
 		}
+	}
+
+	public int getTileCount() {
+		return tileCount;
 	}
 }

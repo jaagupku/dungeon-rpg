@@ -10,35 +10,41 @@ import game.Game;
 import javafx.scene.image.Image;
 
 public class TileSetList {
-	
-	private List<TileSet> tileSets; 
-	private List<Integer> firstGids;
-	
-	
-	public TileSetList(List<Node> sheets){
+
+	private List<TileSet> tileSets;
+
+	public TileSetList(List<Node> sheets) {
 		tileSets = new ArrayList<TileSet>();
-		firstGids = new ArrayList<Integer>();
 		for (Node n : sheets) {
 			Element e = (Element) n;
 			if (e.getAttribute("name").equals("markers"))
 				continue;
 			TileSet ts = new TileSet(n);
 			tileSets.add(ts);
-			firstGids.add(ts.getFirstGid());
 		}
+		//System.exit(0);
+	}
+
+	void playAnimations() {
+		tileSets.forEach(ts -> ts.getAnimations().forEach(ani -> ani.play()));
 	}
 	
+	void stopAnimations(){
+		tileSets.forEach(ts -> ts.getAnimations().forEach(ani -> ani.stop()));
+	}
+
 	/**
 	 * Gets image.
-	 * @param gid - global image id
+	 * 
+	 * @param gid
+	 *            - global image id
 	 * @return image
 	 */
-	public Image get(int gid){
-		for(int i=0; i<firstGids.size(); i++){
-			if(firstGids.get(i) > gid)
-				continue;
-			return tileSets.get(i).get(gid);
+	public final Image get(int gid) {
+		for (int i = 0; i < tileSets.size(); i++) {
+			if (tileSets.get(i).getFirstGid()+tileSets.get(i).getTileCount()-1 > gid)
+				return tileSets.get(i).get(gid);
 		}
-		return new Image("missing.png", Game.tileSize*Game.scale, Game.tileSize*Game.scale, true, false);
+		return new Image("missing.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);
 	}
 }

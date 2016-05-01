@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -26,11 +24,9 @@ public class World {
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
-	private Map<String, Object> gameProperties;
 
 	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
-		gameProperties = new HashMap<>();
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
 		// "room<number>.txt"
@@ -39,22 +35,20 @@ public class World {
 			if (!f.exists())
 				break;
 			TiledMap tm = new TiledMap(f);
-			gameProperties.putAll(tm.getProperties());
 			rooms.add(new Room(tm));
 			counter++;
 		}
-		gameProperties.put("testInteger",
-				(int) gameProperties.get("testInteger") + (int) gameProperties.get("intTest"));
-		System.out.println(gameProperties);
 		if (rooms.size() == 0)
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
+		currentRoom.resumeAnimations();
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
 
 	}
 
 	/**
 	 * Renders world on canvas.
+	 * 
 	 * @param canvas
 	 */
 	public void render(Canvas canvas) {
@@ -112,8 +106,11 @@ public class World {
 
 	/**
 	 * Calculates offset from screen and player.
-	 * @param screenWidth - Width of the canvas
-	 * @param screenHeight - Height of the canvas
+	 * 
+	 * @param screenWidth
+	 *            - Width of the canvas
+	 * @param screenHeight
+	 *            - Height of the canvas
 	 * @return {offsetX, offsetY}
 	 */
 	private double[] getOffset(double screenWidth, double screenHeight) {
@@ -158,5 +155,10 @@ public class World {
 			return PLAYER_LOSE;
 		// TODO Game can't be won.
 		return GAME_NOT_OVER;
+	}
+
+	public void stop() {
+		currentRoom.stopAnimations();
+		
 	}
 }

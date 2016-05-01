@@ -93,6 +93,7 @@ public class Game {
 
 	private void stop() {
 		timer.stop();
+		world.stop();
 		world = null;
 		canvas = null;
 	}

@@ -20,8 +20,6 @@ import org.xml.sax.SAXException;
 import game.Game;
 import game.Renderable;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 
 public class TiledMap implements Renderable {
 
@@ -43,27 +41,39 @@ public class TiledMap implements Renderable {
 		loadTiledMap(root);
 	}
 	
+	public void playAnimations(){
+		tileSheet.playAnimations();
+	}
+	
+	public void stopAnimations(){
+		tileSheet.stopAnimations();
+	}
+
 	/**
 	 * Gets root node of the TMX map file.
-	 * @param file - map file
+	 * 
+	 * @param file
+	 *            - map file
 	 * @return root node of map
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	private Node getRootNode(File file) throws ParserConfigurationException, SAXException, IOException{
+	private Node getRootNode(File file) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
 		doc.getDocumentElement().normalize();
 		return doc.getDocumentElement();
 	}
-	
+
 	/**
 	 * Loads tilesets, layers, objects and map properties.
-	 * @param root - root node of map
+	 * 
+	 * @param root
+	 *            - root node of map
 	 * @throws TiledMapEncodingException
 	 */
-	private void loadTiledMap(Node root) throws TiledMapEncodingException{
+	private void loadTiledMap(Node root) throws TiledMapEncodingException {
 		NodeList rootChilds = root.getChildNodes();
 		ArrayList<Node> tilesetNodes = new ArrayList<Node>();
 		ArrayList<Node> layerNodes = new ArrayList<Node>();
@@ -162,10 +172,15 @@ public class TiledMap implements Renderable {
 
 	/**
 	 * Renders specified layer.
-	 * @param gc - GraphicsContext
-	 * @param offsetX - x offset
-	 * @param offsetY - y offset
-	 * @param layer - layer id
+	 * 
+	 * @param gc
+	 *            - GraphicsContext
+	 * @param offsetX
+	 *            - x offset
+	 * @param offsetY
+	 *            - y offset
+	 * @param layer
+	 *            - layer id
 	 */
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int layer) {
 		layers[layer].render(gc, offsetX, offsetY);
@@ -173,11 +188,17 @@ public class TiledMap implements Renderable {
 
 	/**
 	 * Renders layers in range [from, to)
-	 * @param gc - GraphicsContext
-	 * @param offsetX - x offset
-	 * @param offsetY - y offset
-	 * @param from - Start layer id
-	 * @param to - End layer id
+	 * 
+	 * @param gc
+	 *            - GraphicsContext
+	 * @param offsetX
+	 *            - x offset
+	 * @param offsetY
+	 *            - y offset
+	 * @param from
+	 *            - Start layer id
+	 * @param to
+	 *            - End layer id
 	 */
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int from, int to) {
 		for (int layer = from; layer < to; layer++)

@@ -19,7 +19,7 @@ import tilemap.TiledMapEncodingException;
 
 public class Main extends Application {
 
-	public final static int windowWidth = 800, windowHeight = 600;
+	public final static int windowWidth = 1280, windowHeight = 720;
 
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
