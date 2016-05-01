@@ -30,7 +30,7 @@ public class TiledMap implements Renderable {
 	private TileLayer collisionLayer;
 	private TileLayer[] layers;
 	private Map<String, Object> properties;
-	private List<Image> tileSheet = new ArrayList<Image>();
+	private TileSetList tileSheet;
 
 	public TiledMap(File file)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
@@ -143,16 +143,7 @@ public class TiledMap implements Renderable {
 	}
 
 	private void loadTileSets(List<Node> sheets) {
-		for (Node n : sheets) {
-			Element e = (Element) n;
-			if (e.getAttribute("name").equals("markers"))
-				continue;
-			int tileCount = Integer.parseInt(e.getAttribute("tilecount"));
-			int columns = Integer.parseInt(e.getAttribute("columns"));
-			Element imageData = (Element) n.getChildNodes().item(1);
-			String sheetPath = imageData.getAttribute("source").replace("../", "");
-			tileSheet.addAll(loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Game.scale));
-		}
+		tileSheet = new TileSetList(sheets);
 	}
 
 	private void loadLayers(List<Node> layers) throws TiledMapEncodingException {
@@ -200,7 +191,7 @@ public class TiledMap implements Renderable {
 	}
 
 	public boolean isEmpty(int x, int y) {
-		return collisionLayer.getTile(x, y) == -1;
+		return collisionLayer.getTile(x, y) == 0;
 	}
 
 	public final Map<String, Object> getProperties() {
@@ -213,35 +204,5 @@ public class TiledMap implements Renderable {
 
 	public int getHeight() {
 		return height;
-	}
-
-	/**
-	 * Loads and rescales images from tilesheet at specified path and returns images as a list.
-	 * @param path - Path as a string for the tilesheet
-	 * @param tileCount - number of tiles in the sheet
-	 * @param columns - number of columns in a tilesheet
-	 * @param tileSize - tile size, tile width = tile height
-	 * @param scale - scale factor
-	 * @return list of rescaled images.
-	 */
-	public static List<Image> loadImagesFromTilesheet(String path, int tileCount, int columns, int tileSize,
-			double scale) {
-		List<Image> sheet = new ArrayList<Image>();
-
-		Image sheetImgNotResized = new Image(path);
-		Image sheetImg = new Image(path, Math.round(scale * sheetImgNotResized.getWidth()),
-				Math.round(scale * sheetImgNotResized.getHeight()), true, false);
-
-		for (int tCount = 0; tCount < tileCount; tCount++) {
-			int x = (int) ((tCount % columns) * tileSize * scale);
-			int y = (int) ((tCount / columns) * tileSize * scale);
-			int width = (int) (tileSize * Game.scale);
-			int height = (int) (tileSize * Game.scale);
-
-			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
-			sheet.add((Image) wi);
-		}
-
-		return sheet;
 	}
 }

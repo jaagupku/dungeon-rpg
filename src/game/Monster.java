@@ -13,7 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
-import tilemap.TiledMap;
+import tilemap.TileSet;
 
 public class Monster extends Fighter implements Renderable, Movable {
 
@@ -62,7 +62,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 	}
 
 	static void loadMonsterImages() {
-		images = TiledMap.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Game.scale);
+		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Game.scale);
 
 	}
 

@@ -1,23 +1,20 @@
 package tilemap;
 
-import java.util.List;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import game.Game;
 import game.Renderable;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class TileLayer implements Renderable {
 
 	private int width, height;
 	private int[][] tiles;
 	private boolean visible;
-	private List<Image> tileSheet;
+	private TileSetList tileSheet;
 
-	public TileLayer(Node node, List<Image> sheet) throws TiledMapEncodingException {
+	public TileLayer(Node node, TileSetList sheet) throws TiledMapEncodingException {
 		super();
 		tileSheet = sheet;
 		Element e = (Element) node;
@@ -42,7 +39,7 @@ public class TileLayer implements Renderable {
 		for (int y = 0; y < layerDataTileLines.length; y++) {
 			String[] temp = layerDataTileLines[y].split(",");
 			for (int x = 0; x < temp.length; x++) {
-				tiles[x][y] = Integer.parseInt(temp[x]) - 1;
+				tiles[x][y] = Integer.parseInt(temp[x]);
 			}
 		}
 	}
@@ -57,7 +54,7 @@ public class TileLayer implements Renderable {
 	private void renderEachTile(GraphicsContext gc, double offsetX, double offsetY) {
 		for (int y = 0; y < getHeight(); y++) {
 			for (int x = 0; x < getWidth(); x++) {
-				if (tiles[x][y] != -1)
+				if (tiles[x][y] != 0)
 					gc.drawImage(tileSheet.get(tiles[x][y]), x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
 			}
 		}
