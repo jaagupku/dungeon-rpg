@@ -12,6 +12,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import main.Game;
 
 public class Bar {
 
@@ -23,7 +24,7 @@ public class Bar {
 	private Font font;
 	private DoubleProperty value;
 	private DoubleProperty changeableValue;
-	private String text;
+	private String text1, text2;
 
 	public Bar(double posX, double posY, double width, double height, Color color1, Color color2) {
 		super();
@@ -36,7 +37,7 @@ public class Bar {
 		this.color1 = color1;
 		this.color2 = color2;
 		textColor = Color.DIMGREY.darker().darker().darker();
-		font = new Font("verdana", height - height / 20);
+		font = new Font("verdana", height - height / 50 + 1);
 		value = new SimpleDoubleProperty();
 		changeableValue = new SimpleDoubleProperty();
 		changeableValue.addListener((obs, oldV, newV) -> {
@@ -69,7 +70,14 @@ public class Bar {
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.setTextBaseline(VPos.CENTER);
 		gc.setFont(font);
-		gc.fillText(text, textX, textY);
+		if (text2 != null) {
+			if (x < Game.getMouseX() && Game.getMouseX() < x + width && y < Game.getMouseY()
+					&& Game.getMouseY() < y + height)
+				gc.fillText(text2, textX, textY);
+			else
+				gc.fillText(text1, textX, textY);
+		} else
+			gc.fillText(text1, textX, textY);
 		gc.setStroke(prevStroke);
 		gc.setFill(prevFill);
 		gc.setFont(prevFont);
@@ -85,8 +93,12 @@ public class Bar {
 		this.height = height;
 	}
 
-	public void setText(String s) {
-		text = s;
+	public void setText1(String s) {
+		text1 = s;
+	}
+
+	public void setText2(String s) {
+		text2 = s;
 	}
 
 	public void setValue(double value) {

@@ -10,6 +10,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -33,12 +35,13 @@ public class Game {
 	private AnimationTimer timer;
 	private long before = 0;
 
-	public static List<HitSplat> hitSplats;
+	public static final List<HitSplat> hitSplats = new ArrayList<HitSplat>();;
 	public static Bar healthBar, xpBar;
 	public static int tileSize = -1;
 	public static final double scale = Math.sqrt(Math.pow(Main.windowWidth, 2) + Math.pow(Main.windowHeight, 2)) / 1000;
 	public static final int moveTime = 320;
 	public static final int TURN_DELAY = 15;
+	private static DoubleProperty mouseX = new SimpleDoubleProperty(0), mouseY = new SimpleDoubleProperty(0);
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
@@ -57,19 +60,22 @@ public class Game {
 				event.consume();
 			}
 		});
-		hitSplats = new ArrayList<HitSplat>();
+		canvas.setOnMouseMoved(mouse -> {
+			mouseX.set(mouse.getX());
+			mouseY.set(mouse.getY());
+		});
 
 		double xpWidth = 0.875 * canvas.getWidth();
-		double xpHeight = 0.0166 * canvas.getHeight();
+		double xpHeight = 0.02 * canvas.getHeight();
 		double xpX = (canvas.getWidth() - xpWidth) / 2;
 		double xpY = canvas.getHeight() - xpHeight;
-		xpBar = new Bar(xpX, xpY, xpWidth, xpHeight, Color.YELLOW, Color.GRAY);
+		xpBar = new Bar(xpX, xpY, xpWidth, xpHeight, Color.GOLD, Color.GRAY);
 
 		double hpWidth = 0.3125 * canvas.getWidth();
 		double hpHeight = 0.0416 * canvas.getHeight();
 		double hpX = (canvas.getWidth() - hpWidth) / 2;
 		double hpY = canvas.getHeight() - hpHeight - xpHeight - 2;
-		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.RED);
+		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.DARKRED.brighter());
 
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
 		world = new World();
@@ -86,12 +92,18 @@ public class Game {
 		healthBar.draw(gc);
 		xpBar.draw(gc);
 
-		hitSplats.removeIf(splat -> splat.delete());
-
 		gc.setFill(Color.WHITE);
 		double currentFps = 1_000_000_000 / delta;
 		gc.setFont(new Font(14));
 		gc.fillText("FPS: " + Double.toString(currentFps), 30, 30);
+	}
+
+	public static double getMouseX() {
+		return mouseX.doubleValue();
+	}
+
+	public static double getMouseY() {
+		return mouseY.doubleValue();
 	}
 
 	private void stop() {

@@ -44,7 +44,6 @@ public class World {
 		currentRoom = rooms.get(0);
 		currentRoom.resumeAnimations();
 		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
-
 	}
 
 	/**
@@ -57,6 +56,7 @@ public class World {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1]);
 
+		Game.hitSplats.removeIf(elem -> elem.delete());
 		Game.hitSplats.forEach(elem -> elem.draw(gc, offset[0], offset[1]));
 
 	}
@@ -88,7 +88,7 @@ public class World {
 			timeline.play();
 		} else {
 			playerAttack(dir);
-			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime*1.3), ae -> {
+			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime * 1.3), ae -> {
 				monsterTurn();
 			}));
 			delay.setCycleCount(1);
@@ -160,6 +160,6 @@ public class World {
 
 	public void stop() {
 		currentRoom.stopAnimations();
-		
+
 	}
 }

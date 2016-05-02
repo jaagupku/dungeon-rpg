@@ -4,6 +4,7 @@ import java.util.Random;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import main.Game;
@@ -41,12 +42,12 @@ public class Fighter {
 	public int attackOther(Fighter o) {
 		int dmg = rng.nextInt(attackPower);
 		if (rng.nextInt(attackAccuracy) > rng.nextInt(o.getAgility())) {
-			System.out.println(getName() + " attacks " + o.getName());
 			o.defendFromAttack(dmg);
 			return dmg;
 
 		} else {
-			Game.hitSplats.add(new HitSplat("DODGED", (o.getX()+0.38)*Game.tileSize, (o.getY()+0.8)*Game.tileSize));
+			Game.hitSplats
+					.add(new HitSplat("DODGED", (o.getX() + 0.38) * Game.tileSize, (o.getY() + 0.8) * Game.tileSize));
 			return 0;
 		}
 	}
@@ -54,12 +55,20 @@ public class Fighter {
 	public void defendFromAttack(int dmg) {
 		if (rng.nextInt(getDefense()) < dmg) {
 			takeDamage(dmg);
-			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize));
+			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX() + 0.38) * Game.tileSize,
+					(getY() + 0.8) * Game.tileSize));
 		} else {
-			Game.hitSplats.add(new HitSplat("BLOCKED", (getX()+0.38)*Game.tileSize, (getY()+0.8)*Game.tileSize));
+			Game.hitSplats
+					.add(new HitSplat("BLOCKED", (getX() + 0.38) * Game.tileSize, (getY() + 0.8) * Game.tileSize));
 		}
 	}
 
+	/**
+	 * Subtracts damage from hp.
+	 * 
+	 * @param dmg
+	 *            - amount damage taken
+	 */
 	private void takeDamage(int dmg) {
 		health.set(getHealth() - dmg);
 		System.out.print(getName() + " got damaged for " + dmg + " hitpoints");
@@ -72,6 +81,13 @@ public class Fighter {
 		}
 	}
 
+	/**
+	 * Increases fighters health by amount. Health won't go higher than max
+	 * health.
+	 * 
+	 * @param amount
+	 *            - amount healed
+	 */
 	public void heal(int health) {
 		this.health.set(getHealth() + health > maxHealth ? maxHealth : getHealth() + health);
 	}
@@ -84,7 +100,7 @@ public class Fighter {
 		defense += 1;
 		agility += 1;
 	}
-	
+
 	public double getX() {
 		return x.doubleValue();
 	}
@@ -124,9 +140,9 @@ public class Fighter {
 	public int getHealth() {
 		return health.intValue();
 	}
-	
-	IntegerProperty healthProperty(){
-		return health;
+
+	final ReadOnlyIntegerProperty healthProperty() {
+		return IntegerProperty.readOnlyIntegerProperty(health);
 	}
 
 	public int getMaxHealth() {

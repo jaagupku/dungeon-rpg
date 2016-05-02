@@ -88,13 +88,11 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		/*
-		 * BACKGROUND MUSIC
-		 * String source = new
+		 * BACKGROUND MUSIC String source = new
 		 * File("resources/Glorious-Morning-2-.mp3").toURI().toString();
 		 * MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
 		 * mediaPlayer.setCycleCount(Timeline.INDEFINITE);
-		 * mediaPlayer.setAutoPlay(true);
-		 * // TODO
+		 * mediaPlayer.setAutoPlay(true); // TODO
 		 * mediaPlayer.setVolume(settings.getAttribute("music_volume"));
 		 */
 

@@ -22,14 +22,14 @@ public class TileSetList {
 			TileSet ts = new TileSet(n);
 			tileSets.add(ts);
 		}
-		//System.exit(0);
+		// System.exit(0);
 	}
 
 	void playAnimations() {
 		tileSets.forEach(ts -> ts.getAnimations().forEach(ani -> ani.play()));
 	}
-	
-	void stopAnimations(){
+
+	void stopAnimations() {
 		tileSets.forEach(ts -> ts.getAnimations().forEach(ani -> ani.stop()));
 	}
 
@@ -42,7 +42,7 @@ public class TileSetList {
 	 */
 	public final Image get(int gid) {
 		for (int i = 0; i < tileSets.size(); i++) {
-			if (tileSets.get(i).getFirstGid()+tileSets.get(i).getTileCount()-1 > gid)
+			if (tileSets.get(i).getFirstGid() + tileSets.get(i).getTileCount() - 1 > gid)
 				return tileSets.get(i).get(gid);
 		}
 		return new Image("missing.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);

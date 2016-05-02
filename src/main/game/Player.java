@@ -26,16 +26,11 @@ public class Player extends Fighter implements Renderable, Movable {
 		img = new Image("player.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
-		Game.healthBar.setText(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
-		Game.healthBar.setValue(getHealth() / getMaxHealth());
 
-		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
-		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		updateHpBar();
+		updateXpBar();
 
-		healthProperty().addListener(cl -> {
-			Game.healthBar.setValue(((double) getHealth()) / getMaxHealth());
-			Game.healthBar.setText(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
-		});
+		healthProperty().addListener(cl -> updateHpBar());
 	}
 
 	@Override
@@ -50,7 +45,7 @@ public class Player extends Fighter implements Renderable, Movable {
 		double oldY = getY();
 		Point2D newCoords = Direction.getCoordinates(dir, new Point2D(oldX, oldY));
 		double newX = newCoords.getX(), newY = newCoords.getY();
-		
+
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
 				new KeyFrame(Duration.millis(Game.moveTime * .5), new KeyValue(xProperty(), newX),
@@ -74,11 +69,14 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public void addXp(int xp) {
 		this.xp += xp;
-		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
-		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		updateXpBar();
 		if (this.xp >= nextXp)
 			levelUp();
 
+	}
+
+	public int getLevel() {
+		return level;
 	}
 
 	private int xpToNextLevel() {
@@ -89,14 +87,24 @@ public class Player extends Fighter implements Renderable, Movable {
 		return sum;
 	}
 
+	private void updateXpBar() {
+		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
+		Game.xpBar.setText1(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		Game.xpBar.setText2("Level: " + Integer.toString(getLevel()));
+	}
+
+	private void updateHpBar() {
+		Game.healthBar.setText1(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
+		Game.healthBar.setValue(((double) getHealth()) / getMaxHealth());
+	}
+
 	@Override
 	protected void levelUp() {
 		super.levelUp();
 		prevXp = nextXp;
 		level++;
 		nextXp = xpToNextLevel();
-		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
-		Game.xpBar.setText(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		updateXpBar();
 		System.out.println("You have leveled up. You are now level " + level);
 	}
 
