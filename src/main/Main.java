@@ -19,7 +19,7 @@ import main.tilemap.TiledMapEncodingException;
 
 public class Main extends Application {
 
-	public final static int windowWidth = 1280, windowHeight = 720;
+	public final static int windowWidth = 800, windowHeight = 600;
 
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
@@ -32,13 +32,12 @@ public class Main extends Application {
 
 		Button newGame = new Button("New Game");
 		newGame.setOnMouseClicked(event -> {
-			Game game;
 			try {
-				game = new Game();
+				Game game = new Game();
+				stage.setScene(game.getGameScene(stage, this));
 			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
 				throw new RuntimeException(e.getMessage());
 			}
-			stage.setScene(game.getGameScene(stage, this));
 		});
 		menuButtons.getChildren().add(newGame);
 
@@ -88,6 +87,17 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		/*
+		 * BACKGROUND MUSIC
+		 * String source = new
+		 * File("resources/Glorious-Morning-2-.mp3").toURI().toString();
+		 * MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
+		 * mediaPlayer.setCycleCount(Timeline.INDEFINITE);
+		 * mediaPlayer.setAutoPlay(true);
+		 * // TODO
+		 * mediaPlayer.setVolume(settings.getAttribute("music_volume"));
+		 */
+
 		Scene menu = getMenuScene(primaryStage);
 		primaryStage.setResizable(false);
 		primaryStage.setScene(menu);

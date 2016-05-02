@@ -35,7 +35,6 @@ public class TileSet {
 		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Game.scale)
 				.toArray(tileSheet);
 		setUpAnimatedTiles(childNodes);
-		System.out.println(firstGid);
 
 	}
 

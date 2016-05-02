@@ -37,8 +37,8 @@ public class Game {
 	public static Bar healthBar, xpBar;
 	public static int tileSize;
 	public static final double scale = Math.sqrt(Math.pow(Main.windowWidth, 2) + Math.pow(Main.windowHeight, 2)) / 1000;
-	public static final int moveTime = 400;
-	public static final int TURN_DELAY = 20;
+	public static final int moveTime = 320;
+	public static final int TURN_DELAY = 15;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		canvas = new Canvas(Main.windowWidth, Main.windowHeight);

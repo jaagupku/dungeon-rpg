@@ -88,7 +88,7 @@ public class World {
 			timeline.play();
 		} else {
 			playerAttack(dir);
-			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime), ae -> {
+			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime*1.3), ae -> {
 				monsterTurn();
 			}));
 			delay.setCycleCount(1);
