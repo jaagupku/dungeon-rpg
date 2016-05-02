@@ -67,8 +67,8 @@ public class TileSet {
 			}
 		}
 	}
-	
-	List<Animation> getAnimations(){
+
+	List<Animation> getAnimations() {
 		return animations;
 	}
 
@@ -113,12 +113,17 @@ public class TileSet {
 
 		for (int tCount = 0; tCount < tileCount; tCount++) {
 			int x = (int) Math.ceil((tCount % columns) * tileSize * scale);
-			int y = (int) Math.round((tCount / columns) * tileSize * scale);
-			int width = (int) Math.round(tileSize * Game.scale);
-			int height = (int) Math.round(tileSize * Game.scale);
-
+			int y = (int) Math.ceil((tCount / columns) * tileSize * scale);
+			int width = (int) Math.floor(tileSize * scale);
+			int height = (int) Math.floor(tileSize * scale);
+			// try {
 			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
 			sheet.add((Image) wi);
+			// } catch (ArrayIndexOutOfBoundsException e) {
+			// sheet.add(new Image("missing.png", tileSize*scale,
+			// tileSize*scale, true, false));
+			// e.printStackTrace();
+			// }
 		}
 
 		return sheet;
