@@ -35,7 +35,7 @@ public class Game {
 
 	public static List<HitSplat> hitSplats;
 	public static Bar healthBar, xpBar;
-	public static int tileSize;
+	public static int tileSize = -1;
 	public static final double scale = Math.sqrt(Math.pow(Main.windowWidth, 2) + Math.pow(Main.windowHeight, 2)) / 1000;
 	public static final int moveTime = 320;
 	public static final int TURN_DELAY = 15;

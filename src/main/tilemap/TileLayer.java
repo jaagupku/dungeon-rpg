@@ -22,8 +22,7 @@ public class TileLayer implements Renderable {
 		Element layerData = (Element) layerDataNode;
 		String data = layerDataNode.getFirstChild().getNodeValue().trim();
 		if (!layerData.getAttribute("encoding").equals("csv"))
-			throw new TiledMapEncodingException(
-					"Unsupported encoding: " + layerData.getAttribute("encoding") + ", please use CSV.");
+			throw new TiledMapEncodingException(layerData.getAttribute("encoding"));
 
 		this.width = Integer.parseInt(e.getAttribute("width"));
 		this.height = Integer.parseInt(e.getAttribute("height"));

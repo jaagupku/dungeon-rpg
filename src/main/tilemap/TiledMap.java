@@ -37,7 +37,13 @@ public class TiledMap implements Renderable {
 		height = Integer.parseInt(((Element) root).getAttribute("height"));
 		objects = new ArrayList<Node>();
 		properties = new HashMap<>();
-		Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
+		if(Game.tileSize == -1)
+			Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
+		else{
+			int otherTileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
+			if(Game.tileSize != otherTileSize)
+				throw new IllegalTileSizeException(otherTileSize, Game.tileSize, file.getName());
+		}
 		loadTiledMap(root);
 	}
 	
