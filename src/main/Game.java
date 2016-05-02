@@ -1,4 +1,4 @@
-package game;
+package main;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import hud.Bar;
-import hud.HitSplat;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -22,7 +20,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import tilemap.TiledMapEncodingException;
+import main.game.Direction;
+import main.game.Monster;
+import main.game.World;
+import main.hud.Bar;
+import main.hud.HitSplat;
+import main.tilemap.TiledMapEncodingException;
 
 public class Game {
 	private World world;

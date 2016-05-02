@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +13,9 @@ import org.xml.sax.SAXException;
 
 import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
-import tilemap.TiledMap;
-import tilemap.TiledMapEncodingException;
+import main.Game;
+import main.tilemap.TiledMap;
+import main.tilemap.TiledMapEncodingException;
 
 /**
  * 

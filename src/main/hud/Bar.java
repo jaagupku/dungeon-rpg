@@ -1,4 +1,4 @@
-package hud;
+package main.hud;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

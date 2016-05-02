@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,8 +16,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
-import tilemap.TiledMap;
-import tilemap.TiledMapEncodingException;
+import main.Game;
+import main.tilemap.TiledMap;
+import main.tilemap.TiledMapEncodingException;
 
 public class World {
 	public static final int PLAYER_LOSE = 6, GAME_NOT_OVER = 7, PLAYER_WIN = 8;

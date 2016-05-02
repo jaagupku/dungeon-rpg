@@ -1,11 +1,11 @@
-package tilemap;
+package main.tilemap;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import game.Game;
-import game.Renderable;
 import javafx.scene.canvas.GraphicsContext;
+import main.Game;
+import main.game.Renderable;
 
 public class TileLayer implements Renderable {
 

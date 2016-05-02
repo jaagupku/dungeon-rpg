@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +13,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
-import tilemap.TileSet;
+import main.Game;
+import main.tilemap.TileSet;
 
 public class Monster extends Fighter implements Renderable, Movable {
 
@@ -43,7 +44,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 		images.clear();
 	}
 
-	static void loadMonstersFromFile(File f) throws FileNotFoundException {
+	public static void loadMonstersFromFile(File f) throws FileNotFoundException {
 		reset();
 		Scanner sc;
 		sc = new Scanner(f);
@@ -61,7 +62,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 		sc.close();
 	}
 
-	static void loadMonsterImages() {
+	public static void loadMonsterImages() {
 		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Game.scale);
 
 	}

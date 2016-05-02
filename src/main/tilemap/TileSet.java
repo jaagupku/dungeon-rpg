@@ -1,4 +1,4 @@
-package tilemap;
+package main.tilemap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import game.Game;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
+import main.Game;
 
 public class TileSet {
 	private int tileWidth, tileHeight, tileCount, columns, firstGid;

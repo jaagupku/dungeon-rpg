@@ -1,4 +1,4 @@
-package tilemap;
+package main.tilemap;
 
 public class TiledMapEncodingException extends Exception{
 	/**

@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
+import main.Game;
 
 public class Player extends Fighter implements Renderable, Movable {
 	private int xp, level, nextXp, prevXp;

@@ -1,4 +1,4 @@
-package game;
+package main.game;
 
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;

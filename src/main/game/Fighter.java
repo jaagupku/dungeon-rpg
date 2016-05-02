@@ -1,12 +1,13 @@
-package game;
+package main.game;
 
 import java.util.Random;
 
-import hud.HitSplat;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import main.Game;
+import main.hud.HitSplat;
 
 public class Fighter {
 
