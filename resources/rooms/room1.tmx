@@ -1,65 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="48" tileheight="48" nextobjectid="9">
- <properties>
-  <property name="intTest" type="int" value="-42"/>
- </properties>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="48" tileheight="48" nextobjectid="6">
  <tileset firstgid="1" name="tilesheet" tilewidth="48" tileheight="48" tilecount="36" columns="6">
   <image source="../tilesheet.png" width="288" height="288"/>
-  <tile id="2">
-   <animation>
-    <frame tileid="2" duration="100"/>
-    <frame tileid="3" duration="100"/>
-    <frame tileid="4" duration="100"/>
-    <frame tileid="5" duration="100"/>
-   </animation>
-  </tile>
+  <terraintypes>
+   <terrain name="CaveWall" tile="-1"/>
+   <terrain name="CaveGround" tile="-1"/>
+   <terrain name="BlueBricks" tile="-1"/>
+  </terraintypes>
+  <tile id="2" terrain="2,2,2,2"/>
+  <tile id="3" terrain="1,1,1,1"/>
+  <tile id="4" terrain="2,0,2,0"/>
+  <tile id="5" terrain="0,2,0,2"/>
+  <tile id="7" terrain="0,0,0,1"/>
+  <tile id="8" terrain="0,0,1,0"/>
+  <tile id="9" terrain="1,1,1,0"/>
+  <tile id="10" terrain="1,1,0,0"/>
+  <tile id="11" terrain="1,1,0,1"/>
+  <tile id="13" terrain="0,1,0,0"/>
+  <tile id="14" terrain="1,0,0,0"/>
+  <tile id="15" terrain="1,0,1,0"/>
+  <tile id="16" terrain="0,0,0,0"/>
+  <tile id="17" terrain="0,1,0,1"/>
+  <tile id="21" terrain="1,0,1,1"/>
+  <tile id="22" terrain="0,0,1,1"/>
+  <tile id="23" terrain="0,1,1,1"/>
  </tileset>
  <tileset firstgid="37" name="markers" tilewidth="48" tileheight="48" tilecount="3" columns="3">
   <image source="../markers.png" width="144" height="48"/>
  </tileset>
- <layer name="background" width="15" height="8">
+ <layer name="background" width="8" height="8">
   <data encoding="csv">
-2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,
-2,1,1,1,2,1,1,1,1,2,1,1,1,1,1,
-2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,
-1,1,2,2,2,2,2,2,1,1,1,1,1,1,2,
-2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,
-2,2,2,2,2,2,2,2,2,2,2,2,1,1,2
+3,3,3,3,3,3,1,3,
+2,1,2,1,3,1,2,3,
+3,2,1,2,3,2,1,3,
+3,1,2,3,3,1,2,3,
+3,2,1,2,1,2,1,3,
+3,1,2,3,3,1,2,3,
+3,2,1,2,1,2,1,3,
+3,3,3,3,3,3,3,3
 </data>
  </layer>
- <layer name="collision" width="15" height="8" visible="0">
+ <layer name="collision" width="8" height="8" visible="0">
   <data encoding="csv">
-7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-3,0,0,0,0,0,0,3,0,3,0,0,0,0,0,
-3,0,0,0,3,0,0,0,0,3,0,0,0,0,0,
-3,3,3,3,3,3,3,3,0,3,3,3,3,3,3,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
-0,0,3,3,3,3,3,3,0,0,0,0,0,0,3,
-3,0,0,0,0,0,0,3,0,0,0,0,0,0,3,
-3,3,3,3,3,3,3,3,3,3,3,3,0,0,3
+36,36,36,36,36,36,0,36,
+0,0,0,0,36,0,0,36,
+36,0,0,0,36,0,0,36,
+36,0,0,36,36,0,0,36,
+36,0,0,0,0,0,0,36,
+36,0,0,36,36,0,0,36,
+36,0,0,0,0,0,0,36,
+36,36,36,36,36,36,36,36
 </data>
  </layer>
- <objectgroup name="map_data">
-  <object id="1" name="conn1" type="connection" gid="37" x="0" y="240" width="48" height="48"/>
-  <object id="2" name="conn2" type="connection" gid="37" x="0" y="288" width="48" height="48"/>
-  <object id="3" name="e_adventurer" type="monster" gid="39" x="480" y="96" width="48" height="48"/>
-  <object id="4" name="centipede" type="monster" gid="39" x="528" y="288" width="48" height="48"/>
-  <object id="6" name="ghoul" type="monster" gid="39" x="432" y="240" width="48" height="48"/>
-  <object id="7" name="big1" type="connection" gid="37" x="576" y="384" width="48" height="48"/>
-  <object id="8" name="big2" type="connection" gid="37" x="624" y="384" width="48" height="48"/>
+ <objectgroup name="data">
+  <object id="2" name="blueroom" type="connection" gid="37" x="0" y="96" width="48" height="48"/>
+  <object id="3" name="tunnel_blue" type="connection" gid="37" x="288" y="48" width="48" height="48"/>
+  <object id="4" name="wraith" type="monster" gid="39" x="192" y="240" width="48" height="48"/>
+  <object id="5" name="ghoul" type="monster" gid="39" x="48" y="336" width="48" height="48"/>
  </objectgroup>
- <layer name="Tile Layer 3" width="15" height="8">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,3,0,0,0,0,0,0,3,0,0,0,0,0,0,
-0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
 </map>
