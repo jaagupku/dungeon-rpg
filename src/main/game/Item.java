@@ -2,7 +2,6 @@ package main.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import main.Game;
 
 public class Item implements Renderable {
 	private int x, y;
@@ -40,9 +39,9 @@ public class Item implements Renderable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(img, x*Game.tileSize - offsetX, y*Game.tileSize - offsetY);
-		
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
+		gc.drawImage(img, x * tileSize - offsetX, y * tileSize - offsetY);
+
 	}
 
 }

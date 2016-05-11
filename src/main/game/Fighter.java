@@ -46,8 +46,7 @@ public class Fighter {
 			return dmg;
 
 		} else {
-			Game.hitSplats
-					.add(new HitSplat("DODGED", (o.getX() + 0.38) * Game.tileSize, (o.getY() + 0.8) * Game.tileSize));
+			Game.hitSplats.add(new HitSplat("DODGED", (o.getX() + 0.38), (o.getY() + 0.8)));
 			return 0;
 		}
 	}
@@ -55,11 +54,9 @@ public class Fighter {
 	public void defendFromAttack(int dmg) {
 		if (rng.nextInt(getDefense()) < dmg) {
 			takeDamage(dmg);
-			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX() + 0.38) * Game.tileSize,
-					(getY() + 0.8) * Game.tileSize));
+			Game.hitSplats.add(new HitSplat(Integer.toString(dmg), (getX() + 0.38), (getY() + 0.8)));
 		} else {
-			Game.hitSplats
-					.add(new HitSplat("BLOCKED", (getX() + 0.38) * Game.tileSize, (getY() + 0.8) * Game.tileSize));
+			Game.hitSplats.add(new HitSplat("BLOCKED", (getX() + 0.38), (getY() + 0.8)));
 		}
 	}
 
@@ -71,13 +68,8 @@ public class Fighter {
 	 */
 	private void takeDamage(int dmg) {
 		health.set(getHealth() - dmg);
-		System.out.print(getName() + " got damaged for " + dmg + " hitpoints");
 		if (getHealth() <= 0) {
 			health.set(0);
-			System.out.println(".");
-			System.out.println(getName() + " is now dead.");
-		} else {
-			System.out.println(" it now has " + getHealth() + " health.");
 		}
 	}
 

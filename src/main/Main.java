@@ -8,12 +8,10 @@ import org.xml.sax.SAXException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -21,7 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import main.tilemap.TiledMapEncodingException;
 
@@ -30,7 +27,7 @@ import main.tilemap.TiledMapEncodingException;
  */
 public class Main extends Application {
 
-	private static Settings settings;
+	private Settings settings;
 
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
@@ -44,7 +41,7 @@ public class Main extends Application {
 		Button newGame = new Button("New Game");
 		newGame.setOnMouseClicked(event -> {
 			try {
-				Game game = new Game();
+				Game game = new Game(settings);
 				setScene(stage, game.getGameScene(stage, this));
 			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
 				throw new RuntimeException(e.getMessage());
@@ -84,21 +81,17 @@ public class Main extends Application {
 
 	private void setScene(Stage stage, Scene scene) {
 		stage.setScene(scene);
-		stage.setFullScreen(false);
-	}
-
-	public static double getScale() {
-		return settings.getScale();
+		stage.setFullScreen(settings.isFullscreen());
 	}
 
 	private Scene getSettingsScene(Stage stage) {
-		Font labelFont = new Font("verdana", 24 * getScale());
+		Font labelFont = new Font("verdana", 24 * settings.getScale());
 		BorderPane root = new BorderPane();
 		VBox bottom = new VBox();
 		HBox center = new HBox();
 
 		VBox centLeft = new VBox();
-		centLeft.setSpacing(10 * getScale());
+		centLeft.setSpacing(10 * settings.getScale());
 
 		VBox centRight = new VBox();
 		center.setAlignment(Pos.CENTER);
@@ -155,20 +148,12 @@ public class Main extends Application {
 	}
 
 	private Scene getDefaultScene(Stage stage, Parent root) {
-		Scene scene = new Scene(root, getWinWidth(), getWinHeight());
+		Scene scene = new Scene(root, settings.getWinWidth(), settings.getWinHeight());
 		root.setId("pane");
 		scene.getStylesheets().add(getClass().getResource("/menu.css").toExternalForm());
-		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + getWinWidth()
-				+ "px " + getWinHeight() + "px;");
+		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + settings.getWinWidth()
+				+ "px " + settings.getWinHeight() + "px;");
 		return scene;
-	}
-
-	public static int getWinWidth() {
-		return settings.getWinWidth();
-	}
-
-	public static int getWinHeight() {
-		return settings.getWinHeight();
 	}
 
 	@Override
@@ -187,7 +172,7 @@ public class Main extends Application {
 		 * mediaPlayer.setVolume(settings.getAttribute("music_volume"));
 		 */
 		settings = Settings.loadSettings();
-		primaryStage.setScene(getMenuScene(primaryStage));
+		setScene(primaryStage, getMenuScene(primaryStage));
 		primaryStage.setResizable(false);
 		primaryStage.setTitle("Dungeon the RPG");
 		primaryStage.show();

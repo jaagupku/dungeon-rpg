@@ -18,40 +18,38 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javafx.scene.canvas.GraphicsContext;
-import main.Game;
 import main.game.Renderable;
 
 public class TiledMap implements Renderable {
 
 	private int width, height;
+	private int tileSize;
 	private List<Node> objects;
 	private TileLayer collisionLayer;
 	private TileLayer[] layers;
 	private Map<String, Object> properties;
 	private TileSetList tileSheet;
 
-	public TiledMap(File file)
+	public TiledMap(File file, double scale)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		Node root = getRootNode(file);
 		width = Integer.parseInt(((Element) root).getAttribute("width"));
 		height = Integer.parseInt(((Element) root).getAttribute("height"));
 		objects = new ArrayList<Node>();
 		properties = new HashMap<>();
-		if(Game.tileSize == -1)
-			Game.tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
-		else{
-			int otherTileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
-			if(Game.tileSize != otherTileSize)
-				throw new IllegalTileSizeException(otherTileSize, Game.tileSize, file.getName());
-		}
-		loadTiledMap(root);
+		tileSize = Integer.parseInt(((Element) root).getAttribute("tilewidth"));
+		loadTiledMap(root, scale);
 	}
-	
-	public void playAnimations(){
+
+	public int getTileSize() {
+		return tileSize;
+	}
+
+	public void playAnimations() {
 		tileSheet.playAnimations();
 	}
-	
-	public void stopAnimations(){
+
+	public void stopAnimations() {
 		tileSheet.stopAnimations();
 	}
 
@@ -79,7 +77,7 @@ public class TiledMap implements Renderable {
 	 *            - root node of map
 	 * @throws TiledMapEncodingException
 	 */
-	private void loadTiledMap(Node root) throws TiledMapEncodingException {
+	private void loadTiledMap(Node root, double scale) throws TiledMapEncodingException {
 		NodeList rootChilds = root.getChildNodes();
 		ArrayList<Node> tilesetNodes = new ArrayList<Node>();
 		ArrayList<Node> layerNodes = new ArrayList<Node>();
@@ -106,7 +104,7 @@ public class TiledMap implements Renderable {
 			}
 		}
 		layers = new TileLayer[layerNodes.size()];
-		loadTileSets(tilesetNodes);
+		loadTileSets(tilesetNodes, scale);
 		loadLayers(layerNodes);
 		loadObjects(objectGroupNodes);
 		loadProperties(mapProperties);
@@ -158,8 +156,8 @@ public class TiledMap implements Renderable {
 		}
 	}
 
-	private void loadTileSets(List<Node> sheets) {
-		tileSheet = new TileSetList(sheets);
+	private void loadTileSets(List<Node> sheets, double scale) {
+		tileSheet = new TileSetList(sheets, scale, tileSize);
 	}
 
 	private void loadLayers(List<Node> layers) throws TiledMapEncodingException {
@@ -185,11 +183,13 @@ public class TiledMap implements Renderable {
 	 *            - x offset
 	 * @param offsetY
 	 *            - y offset
+	 * @param tileSize
+	 *            - tile size
 	 * @param layer
 	 *            - layer id
 	 */
-	public void render(GraphicsContext gc, double offsetX, double offsetY, int layer) {
-		layers[layer].render(gc, offsetX, offsetY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize, int layer) {
+		layers[layer].render(gc, offsetX, offsetY, tileSize);
 	}
 
 	/**
@@ -201,19 +201,21 @@ public class TiledMap implements Renderable {
 	 *            - x offset
 	 * @param offsetY
 	 *            - y offset
+	 * @param tileSize
+	 *            - tile size
 	 * @param from
 	 *            - Start layer id
 	 * @param to
 	 *            - End layer id
 	 */
-	public void render(GraphicsContext gc, double offsetX, double offsetY, int from, int to) {
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize, int from, int to) {
 		for (int layer = from; layer < to; layer++)
-			layers[layer].render(gc, offsetX, offsetY);
+			layers[layer].render(gc, offsetX, offsetY, tileSize);
 	}
 
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
 		for (TileLayer tl : layers) {
-			tl.render(gc, offsetX, offsetY);
+			tl.render(gc, offsetX, offsetY, tileSize);
 		}
 	}
 

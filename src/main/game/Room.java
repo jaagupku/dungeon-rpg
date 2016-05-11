@@ -13,7 +13,6 @@ import org.xml.sax.SAXException;
 
 import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
-import main.Game;
 import main.tilemap.TiledMap;
 import main.tilemap.TiledMapEncodingException;
 
@@ -28,10 +27,12 @@ public class Room {
 	private int entranceX, entranceY;
 	private TiledMap map;
 	private Random rng = new Random();
-	
+
 	/**
 	 * Creates and fills new room from {@link TiledMap} object.
-	 * @param tMap - tiledmap
+	 * 
+	 * @param tMap
+	 *            - tiledmap
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
@@ -49,26 +50,29 @@ public class Room {
 			switch (e.getAttribute("type")) {
 			case "monster": {
 				int monsterID = Monster.codeNames.indexOf(e.getAttribute("name"));
-				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
-				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
-				monsters.add(new Monster(x, y, monsterID));
+				int[] coords = getCoordinatesFromNodeElement(e);
+				monsters.add(new Monster(coords[0], coords[1], monsterID));
 				break;
 			}
 			case "connection": {
 				String connectionName = e.getAttribute("name");
-				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
-				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
-				connections.add(new Connection(connectionName, x, y));
+				int[] coords = getCoordinatesFromNodeElement(e);
+				connections.add(new Connection(connectionName, coords[0], coords[1]));
 				break;
 			}
 			case "player_spawn": {
-				int x = (int) (Double.parseDouble(e.getAttribute("x")) / Game.tileSize);
-				int y = (int) (Double.parseDouble(e.getAttribute("y")) / Game.tileSize - 1);
-				setEntranceX(x);
-				setEntranceY(y);
+				int[] coords = getCoordinatesFromNodeElement(e);
+				setEntranceX(coords[0]);
+				setEntranceY(coords[1]);
 			}
 			}
 		}
+	}
+
+	private int[] getCoordinatesFromNodeElement(Element e) {
+		int x = (int) (Double.parseDouble(e.getAttribute("x")) / map.getTileSize());
+		int y = (int) (Double.parseDouble(e.getAttribute("y")) / map.getTileSize() - 1);
+		return new int[] { x, y };
 	}
 
 	/**
@@ -116,7 +120,7 @@ public class Room {
 	 * @param offsetY
 	 *            - y offset of scene
 	 */
-	public void render(GraphicsContext gc, Player player, double offsetX, double offsetY) {
+	public void render(GraphicsContext gc, Player player, double offsetX, double offsetY, int tileSize) {
 		List<Renderable> renderOrder = new ArrayList<Renderable>();
 
 		renderOrder.add(map);
@@ -124,7 +128,7 @@ public class Room {
 		renderOrder.addAll(monsters);
 		renderOrder.add(player);
 
-		renderOrder.forEach(elem -> elem.render(gc, offsetX, offsetY));
+		renderOrder.forEach(elem -> elem.render(gc, offsetX, offsetY, tileSize));
 	}
 
 	/**
@@ -224,17 +228,18 @@ public class Room {
 		}
 		return null;
 	}
-	
-	void resumeAnimations(){
+
+	void resumeAnimations() {
 		map.playAnimations();
 	}
 
 	private List<Connection> getConnections() {
 		return connections;
 	}
-	
+
 	/**
 	 * Gets the width of room
+	 * 
 	 * @return Width of the room
 	 */
 	public int getWidth() {
@@ -243,6 +248,7 @@ public class Room {
 
 	/**
 	 * Gets the height of the room
+	 * 
 	 * @return height of the room
 	 */
 	public int getHeight() {
@@ -251,6 +257,7 @@ public class Room {
 
 	/**
 	 * Gets x coordinate of the entrance to the room
+	 * 
 	 * @return x coordinate of the entrance
 	 */
 	public int getEntranceX() {
@@ -259,6 +266,7 @@ public class Room {
 
 	/**
 	 * Gets y coordinate of the entrance to the room
+	 * 
 	 * @return y coordinate of the entrance
 	 */
 	public int getEntranceY() {
@@ -267,6 +275,7 @@ public class Room {
 
 	/**
 	 * Gets the number of monsters in the room.
+	 * 
 	 * @return number of monsters
 	 */
 	public int getNumberOfMonsters() {
@@ -275,7 +284,9 @@ public class Room {
 
 	/**
 	 * Sets the entrance of room.
-	 * @param entranceX - x coordinate
+	 * 
+	 * @param entranceX
+	 *            - x coordinate
 	 */
 	private void setEntranceX(int entranceX) {
 		if (entranceX < 0)
@@ -288,7 +299,9 @@ public class Room {
 
 	/**
 	 * Sets the entrance of room.
-	 * @param entranceY - y coordinate
+	 * 
+	 * @param entranceY
+	 *            - y coordinate
 	 */
 	private void setEntranceY(int entranceY) {
 		if (entranceY < 0)

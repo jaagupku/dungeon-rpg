@@ -14,7 +14,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import main.Game;
-import main.Main;
 import main.tilemap.TileSet;
 
 public class Monster extends Fighter implements Renderable, Movable {
@@ -63,14 +62,29 @@ public class Monster extends Fighter implements Renderable, Movable {
 		sc.close();
 	}
 
-	public static void loadMonsterImages() {
-		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Main.getScale());
-
+	public static void loadMonsterImages(double scale, int tileSize) {
+		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, tileSize, scale);
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(images.get(id), getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
+		gc.drawImage(images.get(id), getX() * tileSize - offsetX, getY() * tileSize - offsetY);
+
+		/*
+		 * if (Game.getMouseX() > getX() * Game.tileSize - offsetX &&
+		 * Game.getMouseX() < getX() * Game.tileSize - offsetX + Game.tileSize
+		 * && Game.getMouseY() > getY() * Game.tileSize - offsetY &&
+		 * Game.getMouseY() < getY() * Game.tileSize - offsetY + Game.tileSize)
+		 * { gc.setFill(Color.BLACK); gc.setGlobalAlpha(.4); Font f = new
+		 * Font(15 * Main.getScale()); gc.setFont(f);
+		 * gc.fillRect(Game.getMouseX(), Game.getMouseY() + 6,
+		 * (getName().length() * 8)*Main.getScale(), 15 * Main.getScale() + 12);
+		 * gc.setGlobalAlpha(1); gc.setTextAlign(TextAlignment.LEFT);
+		 * gc.setTextBaseline(VPos.TOP); gc.setFill(Color.WHITE);
+		 * gc.fillText(getName(), Game.getMouseX() + 4, Game.getMouseY() + 7);
+		 * 
+		 * }
+		 */
 	}
 
 	@Override

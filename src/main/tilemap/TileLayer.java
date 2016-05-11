@@ -44,17 +44,17 @@ public class TileLayer implements Renderable {
 	}
 
 	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
 		if (!visible)
 			return;
-		renderEachTile(gc, offsetX, offsetY);
+		renderEachTile(gc, offsetX, offsetY, tileSize);
 	}
 
-	private void renderEachTile(GraphicsContext gc, double offsetX, double offsetY) {
+	private void renderEachTile(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
 		for (int y = 0; y < getHeight(); y++) {
 			for (int x = 0; x < getWidth(); x++) {
 				if (tiles[x][y] != 0)
-					gc.drawImage(tileSheet.get(tiles[x][y]), x * Game.tileSize - offsetX, y * Game.tileSize - offsetY);
+					gc.drawImage(tileSheet.get(tiles[x][y]), x * tileSize - offsetX, y * tileSize - offsetY);
 			}
 		}
 	}

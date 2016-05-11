@@ -17,6 +17,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.util.Duration;
 import main.Game;
+import main.hud.HitSplat;
+import main.tilemap.IllegalTileSizeException;
+import main.tilemap.TileSet;
 import main.tilemap.TiledMap;
 import main.tilemap.TiledMapEncodingException;
 
@@ -25,8 +28,10 @@ public class World {
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
+	private int tileSize = -1;
 
-	public World() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+	public World(double winWidth, double winHeigth, double scale)
+			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
 		File f;
 		// loob nii palju ruume, kui on kaustas "data" faile nimega
@@ -35,7 +40,14 @@ public class World {
 			f = new File("resources\\rooms\\room" + counter + ".tmx");
 			if (!f.exists())
 				break;
-			TiledMap tm = new TiledMap(f);
+			TiledMap tm = new TiledMap(f, scale);
+			if (tileSize == -1)
+				tileSize = tm.getTileSize();
+			else {
+				int otherTileSize = tm.getTileSize();
+				if (tileSize != otherTileSize)
+					throw new IllegalTileSizeException(otherTileSize, tileSize, f.getName());
+			}
 			rooms.add(new Room(tm));
 			counter++;
 		}
@@ -43,7 +55,12 @@ public class World {
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
 		currentRoom = rooms.get(0);
 		currentRoom.resumeAnimations();
-		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100);
+		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100,
+				TileSet.loadImagesFromTilesheet("player.png", 1, 1, 48, scale).get(0));
+		player.initBars(winWidth, winHeigth);
+		Monster.loadMonsterImages(scale, tileSize);
+		tileSize *= scale;
+		HitSplat.setScaleAndTileSize(scale, tileSize);
 	}
 
 	/**
@@ -54,11 +71,16 @@ public class World {
 	public void render(Canvas canvas) {
 		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		currentRoom.render(gc, player, offset[0], offset[1]);
+		currentRoom.render(gc, player, offset[0], offset[1], tileSize);
 
 		Game.hitSplats.removeIf(elem -> elem.delete());
 		Game.hitSplats.forEach(elem -> elem.draw(gc, offset[0], offset[1]));
 
+	}
+
+	public void drawHud(Canvas canvas) {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		player.drawBars(gc);
 	}
 
 	public void movePlayer(Direction dir) {
@@ -117,26 +139,26 @@ public class World {
 	private double[] getOffset(double screenWidth, double screenHeight) {
 		double offsetX, offsetY;
 		double midX = screenWidth / 2, midY = screenHeight / 2;
-		if (currentRoom.getWidth() * Game.tileSize > screenWidth) {
-			offsetX = player.getX() * Game.tileSize - midX + Game.tileSize / 2;
+		if (currentRoom.getWidth() * tileSize > screenWidth) {
+			offsetX = player.getX() * tileSize - midX + tileSize / 2;
 			if (offsetX < 0)
 				offsetX = 0;
-			else if (offsetX > currentRoom.getWidth() * Game.tileSize - screenWidth) {
-				offsetX = currentRoom.getWidth() * Game.tileSize - screenWidth;
+			else if (offsetX > currentRoom.getWidth() * tileSize - screenWidth) {
+				offsetX = currentRoom.getWidth() * tileSize - screenWidth;
 			}
 		} else {
-			offsetX = currentRoom.getWidth() * Game.tileSize / 2 - screenWidth / 2;
+			offsetX = currentRoom.getWidth() * tileSize / 2 - screenWidth / 2;
 		}
 
-		if (currentRoom.getHeight() * Game.tileSize > screenHeight) {
-			offsetY = player.getY() * Game.tileSize - midY + Game.tileSize / 2;
+		if (currentRoom.getHeight() * tileSize > screenHeight) {
+			offsetY = player.getY() * tileSize - midY + tileSize / 2;
 			if (offsetY < 0)
 				offsetY = 0;
-			else if (offsetY > currentRoom.getHeight() * Game.tileSize - screenHeight) {
-				offsetY = currentRoom.getHeight() * Game.tileSize - screenHeight;
+			else if (offsetY > currentRoom.getHeight() * tileSize - screenHeight) {
+				offsetY = currentRoom.getHeight() * tileSize - screenHeight;
 			}
 		} else {
-			offsetY = currentRoom.getHeight() * Game.tileSize / 2 - screenHeight / 2;
+			offsetY = currentRoom.getHeight() * tileSize / 2 - screenHeight / 2;
 		}
 		return new double[] { offsetX, offsetY };
 	}

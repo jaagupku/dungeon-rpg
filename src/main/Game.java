@@ -23,7 +23,6 @@ import javafx.stage.Stage;
 import main.game.Direction;
 import main.game.Monster;
 import main.game.World;
-import main.hud.Bar;
 import main.hud.HitSplat;
 import main.tilemap.TiledMapEncodingException;
 
@@ -32,16 +31,17 @@ public class Game {
 	private Canvas canvas;
 	private AnimationTimer timer;
 	private long before = 0;
+	private Settings settings;
 
-	public static final List<HitSplat> hitSplats = new ArrayList<HitSplat>();;
-	public static Bar healthBar, xpBar;
-	public static int tileSize = -1;
+	public static final List<HitSplat> hitSplats = new ArrayList<HitSplat>();
 	public static final int MOVE_TIME = 320;
 	public static final int TURN_DELAY = 15;
 	private static double mouseX = 0, mouseY = 0;
 
-	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
-		canvas = new Canvas(Main.getWinWidth(), Main.getWinHeight());
+	public Game(Settings settings)
+			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+		this.settings = settings;
+		canvas = new Canvas(settings.getWinWidth(), settings.getWinHeight());
 		canvas.setFocusTraversable(true);
 		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
@@ -62,32 +62,17 @@ public class Game {
 			mouseY = mouse.getY();
 		});
 
-		double xpWidth = 0.875 * canvas.getWidth();
-		double xpHeight = 0.02 * canvas.getHeight();
-		double xpX = (canvas.getWidth() - xpWidth) / 2;
-		double xpY = canvas.getHeight() - xpHeight;
-		xpBar = new Bar(xpX, xpY, xpWidth, xpHeight, Color.GOLD, Color.GRAY);
-
-		double hpWidth = 0.3125 * canvas.getWidth();
-		double hpHeight = 0.0416 * canvas.getHeight();
-		double hpX = (canvas.getWidth() - hpWidth) / 2;
-		double hpY = canvas.getHeight() - hpHeight - xpHeight - 2;
-		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.DARKRED.brighter());
-
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
-		world = new World();
-		Monster.loadMonsterImages();
-		Game.tileSize *= Main.getScale();
+		world = new World(settings.getWinWidth(), settings.getWinHeight(), settings.getScale());
 	}
 
 	private void render(long delta) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.setFill(Color.BLACK);
-		gc.fillRect(0, 0, Main.getWinWidth(), Main.getWinHeight());
+		gc.fillRect(0, 0, settings.getWinWidth(), settings.getWinHeight());
 		world.render(canvas);
 
-		healthBar.draw(gc);
-		xpBar.draw(gc);
+		world.drawHud(canvas);
 
 		gc.setFill(Color.WHITE);
 		double currentFps = 1_000_000_000 / delta;
@@ -106,7 +91,6 @@ public class Game {
 	private void stop() {
 		timer.stop();
 		world.stop();
-		tileSize = -1;
 		world = null;
 		canvas = null;
 	}

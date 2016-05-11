@@ -7,19 +7,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javafx.scene.image.Image;
-import main.Main;
 
 public class TileSetList {
 
 	private List<TileSet> tileSets;
+	private Image missingTile;
 
-	public TileSetList(List<Node> sheets) {
+	public TileSetList(List<Node> sheets, double scale, int tileSize) {
+		missingTile = TileSet.loadImagesFromTilesheet("missing.png", 1, 1, 48, scale).get(0);
 		tileSets = new ArrayList<TileSet>();
 		for (Node n : sheets) {
 			Element e = (Element) n;
 			if (e.getAttribute("name").equals("markers"))
 				continue;
-			TileSet ts = new TileSet(n);
+			TileSet ts = new TileSet(n, scale, tileSize);
 			tileSets.add(ts);
 		}
 	}
@@ -44,6 +45,6 @@ public class TileSetList {
 			if (tileSets.get(i).getFirstGid() + tileSets.get(i).getTileCount() - 1 > gid)
 				return tileSets.get(i).get(gid);
 		}
-		return TileSet.loadImagesFromTilesheet("missing.png", 1, 1, 48, Main.getScale()).get(0);
+		return missingTile;
 	}
 }

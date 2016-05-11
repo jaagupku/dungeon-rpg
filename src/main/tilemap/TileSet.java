@@ -13,14 +13,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 import main.Game;
-import main.Main;
 
 public class TileSet {
 	private int tileCount, columns, firstGid;
 	private Image[] tileSheet;
 	private List<Animation> animations;
 
-	public TileSet(Node n) {
+	public TileSet(Node n, double scale, int tileSize) {
 		super();
 		animations = new ArrayList<Animation>();
 		Element e = (Element) n;
@@ -31,8 +30,7 @@ public class TileSet {
 		NodeList childNodes = n.getChildNodes();
 		Element imageData = (Element) childNodes.item(1);
 		String sheetPath = imageData.getAttribute("source").replace("../", "");
-		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Main.getScale())
-				.toArray(tileSheet);
+		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, tileSize, scale).toArray(tileSheet);
 		setUpAnimatedTiles(childNodes);
 
 	}

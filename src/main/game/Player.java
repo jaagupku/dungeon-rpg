@@ -6,18 +6,19 @@ import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import main.Game;
-import main.Main;
-import main.tilemap.TileSet;
+import main.hud.Bar;
 
 public class Player extends Fighter implements Renderable, Movable {
 	private int xp, level, nextXp, prevXp;
 	private Image img;
 	private boolean hasTurn;
 	private Timeline turnDelayTimeline;
+	private Bar healthBar, xpBar;
 
-	public Player(int x, int y, int maxHealth) {
+	public Player(int x, int y, int maxHealth, Image img) {
 		super("Player", maxHealth, 10, 7, 3, 3);
 		setX(x);
 		setY(y);
@@ -25,19 +26,38 @@ public class Player extends Fighter implements Renderable, Movable {
 		xp = 0;
 		prevXp = 0;
 		nextXp = xpToNextLevel();
-		img = TileSet.loadImagesFromTilesheet("player.png", 1, 1, 48, Main.getScale()).get(0);
+		this.img = img;
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
-
-		updateHpBar();
-		updateXpBar();
 
 		healthProperty().addListener(cl -> updateHpBar());
 	}
 
+	void initBars(double width, double heigth) {
+		double xpWidth = 0.875 * width;
+		double xpHeight = 0.02 * heigth;
+		double xpX = (width - xpWidth) / 2;
+		double xpY = heigth - xpHeight;
+		xpBar = new Bar(xpX, xpY, xpWidth, xpHeight, Color.GOLD, Color.GRAY);
+
+		double hpWidth = 0.3125 * width;
+		double hpHeight = 0.0416 * heigth;
+		double hpX = (width - hpWidth) / 2;
+		double hpY = heigth - hpHeight - xpHeight - 2;
+		healthBar = new Bar(hpX, hpY, hpWidth, hpHeight, Color.GREEN, Color.DARKRED.brighter());
+
+		updateHpBar();
+		updateXpBar();
+	}
+
+	public void drawBars(GraphicsContext gc) {
+		healthBar.draw(gc);
+		xpBar.draw(gc);
+	}
+
 	@Override
-	public void render(GraphicsContext gc, double offsetX, double offsetY) {
-		gc.drawImage(img, getX() * Game.tileSize - offsetX, getY() * Game.tileSize - offsetY);
+	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
+		gc.drawImage(img, getX() * tileSize - offsetX, getY() * tileSize - offsetY);
 
 	}
 
@@ -90,14 +110,14 @@ public class Player extends Fighter implements Renderable, Movable {
 	}
 
 	private void updateXpBar() {
-		Game.xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
-		Game.xpBar.setText1(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
-		Game.xpBar.setText2("Level: " + Integer.toString(getLevel()));
+		xpBar.setValue(((double) getXp() - getPrevXp()) / (getNextXp() - getPrevXp()));
+		xpBar.setText1(Integer.toString(getXp()) + "/" + Integer.toString(getNextXp()));
+		xpBar.setText2("Level: " + Integer.toString(getLevel()));
 	}
 
 	private void updateHpBar() {
-		Game.healthBar.setText1(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
-		Game.healthBar.setValue(((double) getHealth()) / getMaxHealth());
+		healthBar.setText1(Integer.toString(getHealth()) + "/" + Integer.toString(getMaxHealth()));
+		healthBar.setValue(((double) getHealth()) / getMaxHealth());
 	}
 
 	@Override

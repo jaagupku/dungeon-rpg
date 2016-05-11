@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import main.Main;
 
 public class HitSplat {
 
@@ -23,31 +22,36 @@ public class HitSplat {
 	private boolean delete;
 	private Timeline tl;
 
+	private static double scale;
+	private static int tileSize;
+
 	private static final int TIME_MOVE = 675;
 	private static final int TIME_VISIBLE = 1200;
 	private static final int TIME_STAY = TIME_VISIBLE - TIME_MOVE;
-	private static final double MOVE_Y = -30 * Main.getScale(), MOVE_X = 7 * Main.getScale();
 
 	public HitSplat(String text, double x, double y) {
 		super();
 		this.text = text;
+		x *= tileSize;
+		y *= tileSize;
 		xProperty = new SimpleDoubleProperty(x);
 		yProperty = new SimpleDoubleProperty(y);
 		delete = false;
 		text = text.toUpperCase();
 		if (text.equals("BLOCKED")) {
 			textColor = Color.ROYALBLUE;
-			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20 * Main.getScale());
+			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20 * scale);
 		} else if (text.equals("DODGED")) {
 			textColor = Color.CORAL;
-			font = Font.font("verdana", FontPosture.ITALIC, 20 * Main.getScale());
+			font = Font.font("verdana", FontPosture.ITALIC, 20 * scale);
 		} else {
 			textColor = Color.RED;
-			font = Font.font("verdana", FontWeight.BOLD, 22 * Main.getScale());
+			font = Font.font("verdana", FontWeight.BOLD, 22 * scale);
 		}
+		double moveY = -30 * scale, moveX = 7 * scale;
 		tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(xProperty, x), new KeyValue(yProperty, y)),
-				new KeyFrame(Duration.millis(TIME_MOVE), new KeyValue(xProperty, x + MOVE_X),
-						new KeyValue(yProperty, y + MOVE_Y)),
+				new KeyFrame(Duration.millis(TIME_MOVE), new KeyValue(xProperty, x + moveX),
+						new KeyValue(yProperty, y + moveY)),
 				new KeyFrame(Duration.millis(TIME_MOVE + TIME_STAY)));
 		tl.setOnFinished(ae -> delete = true);
 		tl.setAutoReverse(false);
@@ -71,5 +75,10 @@ public class HitSplat {
 		gc.setFill(prevFill);
 		gc.setFont(prevFont);
 		gc.setGlobalAlpha(1);
+	}
+
+	public static void setScaleAndTileSize(double scale1, int tileSize1) {
+		scale = scale1;
+		tileSize = tileSize1;
 	}
 }
