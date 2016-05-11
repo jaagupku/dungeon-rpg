@@ -13,9 +13,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 import main.Game;
+import main.Main;
 
 public class TileSet {
-	private int tileWidth, tileHeight, tileCount, columns, firstGid;
+	private int tileCount, columns, firstGid;
 	private Image[] tileSheet;
 	private List<Animation> animations;
 
@@ -23,8 +24,6 @@ public class TileSet {
 		super();
 		animations = new ArrayList<Animation>();
 		Element e = (Element) n;
-		tileWidth = Integer.parseInt(e.getAttribute("tilewidth"));
-		tileHeight = Integer.parseInt(e.getAttribute("tileheight"));
 		firstGid = Integer.parseInt(e.getAttribute("firstgid"));
 		tileCount = Integer.parseInt(e.getAttribute("tilecount"));
 		columns = Integer.parseInt(e.getAttribute("columns"));
@@ -32,7 +31,7 @@ public class TileSet {
 		NodeList childNodes = n.getChildNodes();
 		Element imageData = (Element) childNodes.item(1);
 		String sheetPath = imageData.getAttribute("source").replace("../", "");
-		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Game.scale)
+		tileSheet = loadImagesFromTilesheet(sheetPath, tileCount, columns, Game.tileSize, Main.getScale())
 				.toArray(tileSheet);
 		setUpAnimatedTiles(childNodes);
 
@@ -112,18 +111,21 @@ public class TileSet {
 				Math.round(scale * sheetImgNotResized.getHeight()), true, false);
 
 		for (int tCount = 0; tCount < tileCount; tCount++) {
-			int x = (int) Math.ceil((tCount % columns) * tileSize * scale);
-			int y = (int) Math.ceil((tCount / columns) * tileSize * scale);
+			int x = (int) Math.round((tCount % columns) * tileSize * scale);
+			int y = (int) Math.round((tCount / columns) * tileSize * scale);
 			int width = (int) Math.floor(tileSize * scale);
 			int height = (int) Math.floor(tileSize * scale);
-			// try {
-			WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
-			sheet.add((Image) wi);
-			// } catch (ArrayIndexOutOfBoundsException e) {
-			// sheet.add(new Image("missing.png", tileSize*scale,
-			// tileSize*scale, true, false));
-			// e.printStackTrace();
-			// }
+			if (x + width > sheetImg.getWidth())
+				x--;
+			if (y + height > sheetImg.getHeight())
+				y--;
+			try {
+				WritableImage wi = new WritableImage(sheetImg.getPixelReader(), x, y, width, height);
+				sheet.add((Image) wi);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				sheet.add(new Image("missing.png", tileSize * scale, tileSize * scale, true, false));
+				e.printStackTrace();
+			}
 		}
 
 		return sheet;

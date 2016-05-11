@@ -10,8 +10,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -38,13 +36,12 @@ public class Game {
 	public static final List<HitSplat> hitSplats = new ArrayList<HitSplat>();;
 	public static Bar healthBar, xpBar;
 	public static int tileSize = -1;
-	public static final double scale = Math.sqrt(Math.pow(Main.windowWidth, 2) + Math.pow(Main.windowHeight, 2)) / 1000;
-	public static final int moveTime = 320;
+	public static final int MOVE_TIME = 320;
 	public static final int TURN_DELAY = 15;
-	private static DoubleProperty mouseX = new SimpleDoubleProperty(0), mouseY = new SimpleDoubleProperty(0);
+	private static double mouseX = 0, mouseY = 0;
 
 	public Game() throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
-		canvas = new Canvas(Main.windowWidth, Main.windowHeight);
+		canvas = new Canvas(Main.getWinWidth(), Main.getWinHeight());
 		canvas.setFocusTraversable(true);
 		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
@@ -61,8 +58,8 @@ public class Game {
 			}
 		});
 		canvas.setOnMouseMoved(mouse -> {
-			mouseX.set(mouse.getX());
-			mouseY.set(mouse.getY());
+			mouseX = mouse.getX();
+			mouseY = mouse.getY();
 		});
 
 		double xpWidth = 0.875 * canvas.getWidth();
@@ -80,13 +77,13 @@ public class Game {
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
 		world = new World();
 		Monster.loadMonsterImages();
-		Game.tileSize *= Game.scale;
+		Game.tileSize *= Main.getScale();
 	}
 
 	private void render(long delta) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.setFill(Color.BLACK);
-		gc.fillRect(0, 0, Main.windowWidth, Main.windowHeight);
+		gc.fillRect(0, 0, Main.getWinWidth(), Main.getWinHeight());
 		world.render(canvas);
 
 		healthBar.draw(gc);
@@ -99,16 +96,17 @@ public class Game {
 	}
 
 	public static double getMouseX() {
-		return mouseX.doubleValue();
+		return mouseX;
 	}
 
 	public static double getMouseY() {
-		return mouseY.doubleValue();
+		return mouseY;
 	}
 
 	private void stop() {
 		timer.stop();
 		world.stop();
+		tileSize = -1;
 		world = null;
 		canvas = null;
 	}

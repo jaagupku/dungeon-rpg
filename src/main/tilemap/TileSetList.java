@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javafx.scene.image.Image;
-import main.Game;
+import main.Main;
 
 public class TileSetList {
 
@@ -22,7 +22,6 @@ public class TileSetList {
 			TileSet ts = new TileSet(n);
 			tileSets.add(ts);
 		}
-		// System.exit(0);
 	}
 
 	void playAnimations() {
@@ -45,6 +44,6 @@ public class TileSetList {
 			if (tileSets.get(i).getFirstGid() + tileSets.get(i).getTileCount() - 1 > gid)
 				return tileSets.get(i).get(gid);
 		}
-		return new Image("missing.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);
+		return TileSet.loadImagesFromTilesheet("missing.png", 1, 1, 48, Main.getScale()).get(0);
 	}
 }

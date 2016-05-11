@@ -88,7 +88,7 @@ public class World {
 			timeline.play();
 		} else {
 			playerAttack(dir);
-			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.moveTime * 1.3), ae -> {
+			Timeline delay = new Timeline(new KeyFrame(Duration.millis(Game.MOVE_TIME * 1.3), ae -> {
 				monsterTurn();
 			}));
 			delay.setCycleCount(1);
@@ -118,7 +118,7 @@ public class World {
 		double offsetX, offsetY;
 		double midX = screenWidth / 2, midY = screenHeight / 2;
 		if (currentRoom.getWidth() * Game.tileSize > screenWidth) {
-			offsetX = player.getX() * Game.tileSize - midX;
+			offsetX = player.getX() * Game.tileSize - midX + Game.tileSize / 2;
 			if (offsetX < 0)
 				offsetX = 0;
 			else if (offsetX > currentRoom.getWidth() * Game.tileSize - screenWidth) {
@@ -129,7 +129,7 @@ public class World {
 		}
 
 		if (currentRoom.getHeight() * Game.tileSize > screenHeight) {
-			offsetY = player.getY() * Game.tileSize - midY;
+			offsetY = player.getY() * Game.tileSize - midY + Game.tileSize / 2;
 			if (offsetY < 0)
 				offsetY = 0;
 			else if (offsetY > currentRoom.getHeight() * Game.tileSize - screenHeight) {

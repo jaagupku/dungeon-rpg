@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import main.Game;
+import main.Main;
 
 public class HitSplat {
 
@@ -21,10 +21,12 @@ public class HitSplat {
 	private Color textColor;
 	private Font font;
 	private boolean delete;
-	private int timeMove;
-	private int timeStay;
-	private int timeVisible;
 	private Timeline tl;
+
+	private static final int TIME_MOVE = 675;
+	private static final int TIME_VISIBLE = 1200;
+	private static final int TIME_STAY = TIME_VISIBLE - TIME_MOVE;
+	private static final double MOVE_Y = -30 * Main.getScale(), MOVE_X = 7 * Main.getScale();
 
 	public HitSplat(String text, double x, double y) {
 		super();
@@ -35,23 +37,18 @@ public class HitSplat {
 		text = text.toUpperCase();
 		if (text.equals("BLOCKED")) {
 			textColor = Color.ROYALBLUE;
-			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20 * Game.scale);
+			font = Font.font("verdana", FontWeight.EXTRA_BOLD, 20 * Main.getScale());
 		} else if (text.equals("DODGED")) {
 			textColor = Color.CORAL;
-			font = Font.font("verdana", FontPosture.ITALIC, 20 * Game.scale);
+			font = Font.font("verdana", FontPosture.ITALIC, 20 * Main.getScale());
 		} else {
 			textColor = Color.RED;
-			font = Font.font("verdana", FontWeight.BOLD, 22 * Game.scale);
+			font = Font.font("verdana", FontWeight.BOLD, 22 * Main.getScale());
 		}
-		timeVisible = 1200;
-		timeMove = 675;
-		timeStay = timeVisible - timeMove;
-		double moveYdir = -(30d / 48) * Game.tileSize;
-		double moveXdir = (7d / 48) * Game.tileSize;
 		tl = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(xProperty, x), new KeyValue(yProperty, y)),
-				new KeyFrame(Duration.millis(timeMove), new KeyValue(xProperty, x + moveXdir),
-						new KeyValue(yProperty, y + moveYdir)),
-				new KeyFrame(Duration.millis(timeMove + timeStay)));
+				new KeyFrame(Duration.millis(TIME_MOVE), new KeyValue(xProperty, x + MOVE_X),
+						new KeyValue(yProperty, y + MOVE_Y)),
+				new KeyFrame(Duration.millis(TIME_MOVE + TIME_STAY)));
 		tl.setOnFinished(ae -> delete = true);
 		tl.setAutoReverse(false);
 		tl.setCycleCount(1);
@@ -65,8 +62,8 @@ public class HitSplat {
 	public void draw(GraphicsContext gc, double offsetX, double offsetY) {
 		Paint prevFill = gc.getFill();
 		Font prevFont = gc.getFont();
-		double alpha = (tl.getCurrentTime().toMillis() > timeMove
-				? (tl.getCurrentTime().toMillis() - timeMove) / timeStay : 0);
+		double alpha = (tl.getCurrentTime().toMillis() > TIME_MOVE
+				? (tl.getCurrentTime().toMillis() - TIME_MOVE) / TIME_STAY : 0);
 		gc.setGlobalAlpha(1 - alpha);
 		gc.setFont(font);
 		gc.setFill(textColor);

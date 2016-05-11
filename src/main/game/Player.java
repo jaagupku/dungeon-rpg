@@ -8,6 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import main.Game;
+import main.Main;
+import main.tilemap.TileSet;
 
 public class Player extends Fighter implements Renderable, Movable {
 	private int xp, level, nextXp, prevXp;
@@ -23,7 +25,7 @@ public class Player extends Fighter implements Renderable, Movable {
 		xp = 0;
 		prevXp = 0;
 		nextXp = xpToNextLevel();
-		img = new Image("player.png", Game.tileSize * Game.scale, Game.tileSize * Game.scale, true, false);
+		img = TileSet.loadImagesFromTilesheet("player.png", 1, 1, 48, Main.getScale()).get(0);
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
 
@@ -48,7 +50,7 @@ public class Player extends Fighter implements Renderable, Movable {
 
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
-				new KeyFrame(Duration.millis(Game.moveTime * .5), new KeyValue(xProperty(), newX),
+				new KeyFrame(Duration.millis(Game.MOVE_TIME * .5), new KeyValue(xProperty(), newX),
 						new KeyValue(yProperty(), newY)));
 		timeline.setAutoReverse(false);
 		timeline.setCycleCount(1);
@@ -58,7 +60,7 @@ public class Player extends Fighter implements Renderable, Movable {
 	public void setTurn(boolean b) {
 		if (b) {
 			turnDelayTimeline = new Timeline(
-					new KeyFrame(Duration.millis(Game.TURN_DELAY + Game.moveTime), ae -> hasTurn = true));
+					new KeyFrame(Duration.millis(Game.TURN_DELAY + Game.MOVE_TIME), ae -> hasTurn = true));
 			turnDelayTimeline.setAutoReverse(false);
 			turnDelayTimeline.setCycleCount(1);
 			turnDelayTimeline.play();

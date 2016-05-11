@@ -8,18 +8,29 @@ import org.xml.sax.SAXException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import main.tilemap.TiledMapEncodingException;
 
+/*
+ * TODO ComboBox css.
+ */
 public class Main extends Application {
 
-	public final static int windowWidth = 800, windowHeight = 600;
+	private static Settings settings;
 
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
@@ -34,7 +45,7 @@ public class Main extends Application {
 		newGame.setOnMouseClicked(event -> {
 			try {
 				Game game = new Game();
-				stage.setScene(game.getGameScene(stage, this));
+				setScene(stage, game.getGameScene(stage, this));
 			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
 				throw new RuntimeException(e.getMessage());
 			}
@@ -42,11 +53,11 @@ public class Main extends Application {
 		menuButtons.getChildren().add(newGame);
 
 		Button settingsButton = new Button("Settings");
-		settingsButton.setOnMouseClicked(event -> System.out.println("settings"));
+		settingsButton.setOnMouseClicked(event -> setScene(stage, getSettingsScene(stage)));
 		menuButtons.getChildren().add(settingsButton);
 
 		Button helpButton = new Button("Help");
-		helpButton.setOnMouseClicked(event -> stage.setScene(getHelpScene(stage)));
+		helpButton.setOnMouseClicked(event -> setScene(stage, getHelpScene(stage)));
 		menuButtons.getChildren().add(helpButton);
 
 		Button exitButton = new Button("Exit");
@@ -63,7 +74,7 @@ public class Main extends Application {
 		BorderPane root = new BorderPane();
 		VBox bottom = new VBox();
 		Button backButton = new Button("Back");
-		backButton.setOnMouseClicked(event -> stage.setScene(getMenuScene(stage)));
+		backButton.setOnMouseClicked(event -> setScene(stage, getMenuScene(stage)));
 		bottom.getChildren().add(backButton);
 		bottom.setAlignment(Pos.CENTER);
 		root.setBottom(bottom);
@@ -71,13 +82,93 @@ public class Main extends Application {
 		return getDefaultScene(stage, root);
 	}
 
+	private void setScene(Stage stage, Scene scene) {
+		stage.setScene(scene);
+		stage.setFullScreen(false);
+	}
+
+	public static double getScale() {
+		return settings.getScale();
+	}
+
+	private Scene getSettingsScene(Stage stage) {
+		Font labelFont = new Font("verdana", 24 * getScale());
+		BorderPane root = new BorderPane();
+		VBox bottom = new VBox();
+		HBox center = new HBox();
+
+		VBox centLeft = new VBox();
+		centLeft.setSpacing(10 * getScale());
+
+		VBox centRight = new VBox();
+		center.setAlignment(Pos.CENTER);
+		centLeft.setAlignment(Pos.CENTER);
+		centRight.setAlignment(Pos.CENTER);
+		center.getChildren().add(centLeft);
+		center.getChildren().add(centRight);
+
+		Button backButton = new Button("Back");
+		backButton.setOnMouseClicked(event -> setScene(stage, getMenuScene(stage)));
+		bottom.getChildren().add(backButton);
+		bottom.setAlignment(Pos.CENTER);
+		root.setBottom(bottom);
+		root.setCenter(center);
+
+		Label resLabel = new Label("Resolution:");
+		resLabel.setFont(labelFont);
+		resLabel.setTextFill(Color.WHITE);
+
+		ComboBox<String> resolutions = new ComboBox<String>(Settings.getResolutionLabels(settings.getAspectRatio()));
+		resolutions.setValue(settings.getWinWidth() + "x" + settings.getWinHeight());
+		resolutions.valueProperty().addListener((ov, s1, s2) -> {
+			if (s2 != null) {
+				String[] res = s2.split("x");
+				int width = Integer.parseInt(res[0]);
+				int height = Integer.parseInt(res[1]);
+				settings.setWindowSize(width, height);
+			}
+		});
+
+		Label aspectRatioLabel = new Label("Aspect ratio:");
+		aspectRatioLabel.setFont(labelFont);
+		aspectRatioLabel.setTextFill(Color.WHITE);
+		centLeft.getChildren().add(aspectRatioLabel);
+
+		ComboBox<String> aspectRatios = new ComboBox<String>(Settings.getAspectRatioLabels());
+		aspectRatios.valueProperty().addListener((ov, s1, s2) -> {
+			settings.setAspectRatio(s2);
+			resolutions.setItems(Settings.getResolutionLabels(s2));
+		});
+		aspectRatios.setValue(settings.getAspectRatio());
+		centLeft.getChildren().add(aspectRatios);
+
+		centLeft.getChildren().add(resLabel);
+		centLeft.getChildren().add(resolutions);
+
+		// CheckBox fullscreen = new CheckBox("Fullscreen");
+		// fullscreen.setTextFill(Color.WHITE);
+		// fullscreen.setTextAlignment(TextAlignment.LEFT);
+		// fullscreen.setFont(labelFont);
+		// centLeft.getChildren().add(fullscreen);
+
+		return getDefaultScene(stage, root);
+	}
+
 	private Scene getDefaultScene(Stage stage, Parent root) {
-		Scene scene = new Scene(root, windowWidth, windowHeight);
+		Scene scene = new Scene(root, getWinWidth(), getWinHeight());
 		root.setId("pane");
 		scene.getStylesheets().add(getClass().getResource("/menu.css").toExternalForm());
-		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + windowWidth
-				+ "px " + windowHeight + "px;");
+		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + getWinWidth()
+				+ "px " + getWinHeight() + "px;");
 		return scene;
+	}
+
+	public static int getWinWidth() {
+		return settings.getWinWidth();
+	}
+
+	public static int getWinHeight() {
+		return settings.getWinHeight();
 	}
 
 	@Override
@@ -95,10 +186,9 @@ public class Main extends Application {
 		 * mediaPlayer.setAutoPlay(true); // TODO
 		 * mediaPlayer.setVolume(settings.getAttribute("music_volume"));
 		 */
-
-		Scene menu = getMenuScene(primaryStage);
+		settings = Settings.loadSettings();
+		primaryStage.setScene(getMenuScene(primaryStage));
 		primaryStage.setResizable(false);
-		primaryStage.setScene(menu);
 		primaryStage.setTitle("Dungeon the RPG");
 		primaryStage.show();
 	}

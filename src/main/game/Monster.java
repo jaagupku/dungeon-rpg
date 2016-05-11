@@ -14,6 +14,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import main.Game;
+import main.Main;
 import main.tilemap.TileSet;
 
 public class Monster extends Fighter implements Renderable, Movable {
@@ -63,7 +64,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 	}
 
 	public static void loadMonsterImages() {
-		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Game.scale);
+		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, Game.tileSize, Main.getScale());
 
 	}
 
@@ -83,7 +84,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO, new KeyValue(xProperty(), oldX), new KeyValue(yProperty(), oldY)),
-				new KeyFrame(Duration.millis(Game.moveTime * .7), new KeyValue(xProperty(), newX),
+				new KeyFrame(Duration.millis(Game.MOVE_TIME * .7), new KeyValue(xProperty(), newX),
 						new KeyValue(yProperty(), newY)));
 		timeline.setAutoReverse(false);
 		timeline.setCycleCount(1);

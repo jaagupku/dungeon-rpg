@@ -1,22 +1,76 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.combo-box .list-cell 
+{
+    -fx-background: red;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 3 0 2 7;
+    -fx-cell-size: 1.66667em; 
+}
+
+.combo-box-popup .list-view 
+{
+    -fx-background-color: red, white;
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}    
+
+.combo-box-popup .list-view .list-cell 
+{
+    -fx-padding: 4 0 4 5;
+
+    /* No alternate highlighting */
+    -fx-background-color: grey;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover 
+{
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover 
+{
+    -fx-background-color: #AA5498;
+    -fx-text-fill: white;
+}
+
+
+.combo-box {
+	-fx-background-color: 
+        linear-gradient(#bb0a21, #252627, #252627, #252627, #bb0a21);
+    -fx-pref-width: 200px;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+}
+
+.combo-box:hover {
+	-fx-background-color: 
+        linear-gradient(#bb0a21, #252627, #bb0a21);
+}
+
+.combo-box:pressed {
+	-fx-background-color: 
+        linear-gradient(#bb0a21, #353637, #353637, #bb0a21);
+}
 
 .button {
     -fx-background-color: 
         linear-gradient(#bb0a21, #252627, #252627, #252627, #bb0a21);
-    -fx-background-insets: 0,1,2;
-    -fx-background-radius: 3,2,1;
-    -fx-padding: 7 30 7 30;
-    -fx-pref-width: 250px;
+    -fx-background-insets: 0.0,1.0,2.0;
+    -fx-background-radius: 3.0,2.0,1.0;
+    -fx-padding: 7.0 30.0 7.0 30.0;
+    -fx-pref-width: 250.0px;
     -fx-text-fill: white;
     -fx-font-family: "Verdana";
     -fx-font-weight: bold;
-    -fx-font-size: 2em;
+    -fx-font-size: 2.0em;
 }
 
 .button:hover {
 	-fx-background-color: 
         linear-gradient(#bb0a21, #252627, #bb0a21);
-    -fx-padding: 8 30 6 30;
+    -fx-padding: 8.0 30.0 6.0 30.0;
 }
 
 .button:pressed {
