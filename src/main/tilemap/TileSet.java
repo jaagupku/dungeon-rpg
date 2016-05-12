@@ -12,7 +12,6 @@ import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
-import main.Game;
 
 public class TileSet {
 	private int tileCount, columns, firstGid;

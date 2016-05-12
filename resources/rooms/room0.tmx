@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="17" height="12" tilewidth="48" tileheight="48" nextobjectid="14">
  <tileset firstgid="1" name="tilesheet" tilewidth="48" tileheight="48" tilecount="36" columns="6">
-  <image source="../tilesheet.png" width="288" height="288"/>
+  <image source="../images/tilesheet.png" width="288" height="288"/>
   <terraintypes>
    <terrain name="CaveWall" tile="-1"/>
    <terrain name="CaveGround" tile="-1"/>
@@ -35,7 +35,7 @@
   </tile>
  </tileset>
  <tileset firstgid="37" name="markers" tilewidth="48" tileheight="48" tilecount="3" columns="3">
-  <image source="../markers.png" width="144" height="48"/>
+  <image source="../images/markers.png" width="144" height="48"/>
  </tileset>
  <layer name="background" width="17" height="12">
   <data encoding="csv">

@@ -1,5 +1,7 @@
 package main.game;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -386,5 +388,21 @@ public class Room {
 
 	public void stopAnimations() {
 		map.stopAnimations();
+	}
+
+	public void save(DataOutputStream dos) throws IOException {
+		dos.writeInt(monsters.size());
+		for(Monster m : monsters){
+			m.save(dos);
+		}
+	}
+	
+	public void load(DataInputStream dis) throws IOException{
+		monsters.clear();
+		items.clear();
+		int n = dis.readInt();
+		for(int i=0; i<n; i++){
+			monsters.add(Monster.load(dis));
+		}
 	}
 }

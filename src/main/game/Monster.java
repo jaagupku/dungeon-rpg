@@ -1,7 +1,10 @@
 package main.game;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -63,7 +66,7 @@ public class Monster extends Fighter implements Renderable, Movable {
 	}
 
 	public static void loadMonsterImages(double scale, int tileSize) {
-		images = TileSet.loadImagesFromTilesheet("monster_sheet.png", names.size(), 4, tileSize, scale);
+		images = TileSet.loadImagesFromTilesheet("images\\monster_sheet.png", names.size(), 4, tileSize, scale);
 	}
 
 	@Override
@@ -129,6 +132,23 @@ public class Monster extends Fighter implements Renderable, Movable {
 
 	public void setDestinationY(int destinationY) {
 		this.destinationY = destinationY;
+	}
+
+	public void save(DataOutputStream dos) throws IOException {
+		dos.writeInt(id);
+		dos.writeInt(xProperty().intValue());
+		dos.writeInt(yProperty().intValue());
+		dos.writeInt(getHealth());
+	}
+	
+	public static Monster load(DataInputStream dis) throws IOException{
+		int id = dis.readInt();
+		int x = dis.readInt();
+		int y = dis.readInt();
+		int hp = dis.readInt();
+		Monster m = new Monster(x, y, id);
+		m.setHealth(hp);
+		return m;
 	}
 
 }

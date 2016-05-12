@@ -59,12 +59,12 @@
         linear-gradient(#bb0a21, #252627, #252627, #252627, #bb0a21);
     -fx-background-insets: 0.0,1.0,2.0;
     -fx-background-radius: 3.0,2.0,1.0;
-    -fx-padding: 7.0 30.0 7.0 30.0;
-    -fx-pref-width: 250.0px;
+    -fx-padding: 7.0 20.0 7.0 20.0;
+    -fx-pref-width: 200px;
     -fx-text-fill: white;
     -fx-font-family: "Verdana";
     -fx-font-weight: bold;
-    -fx-font-size: 2.0em;
+    -fx-font-size: 1.5em;
 }
 
 .button:hover {

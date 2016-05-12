@@ -11,10 +11,12 @@ import org.xml.sax.SAXException;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -32,6 +34,7 @@ public class Game {
 	private AnimationTimer timer;
 	private long before = 0;
 	private Settings settings;
+	private final static String savegamePath = "resources\\savegame.dat";
 
 	public static final List<HitSplat> hitSplats = new ArrayList<HitSplat>();
 	public static final int MOVE_TIME = 320;
@@ -42,25 +45,7 @@ public class Game {
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		this.settings = settings;
 		canvas = new Canvas(settings.getWinWidth(), settings.getWinHeight());
-		canvas.setFocusTraversable(true);
-		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent event) {
-				if (event.getCode() == KeyCode.W) {
-					world.movePlayer(Direction.NORTH);
-				} else if (event.getCode() == KeyCode.S) {
-					world.movePlayer(Direction.SOUTH);
-				} else if (event.getCode() == KeyCode.A) {
-					world.movePlayer(Direction.WEST);
-				} else if (event.getCode() == KeyCode.D) {
-					world.movePlayer(Direction.EAST);
-				}
-				event.consume();
-			}
-		});
-		canvas.setOnMouseMoved(mouse -> {
-			mouseX = mouse.getX();
-			mouseY = mouse.getY();
-		});
+		
 
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
 		world = new World(settings.getWinWidth(), settings.getWinHeight(), settings.getScale());
@@ -97,13 +82,46 @@ public class Game {
 
 	public Scene getGameScene(Stage stage, Main m) {
 		Group root = new Group();
-		canvas.setOnKeyReleased(value -> {
-			if (value.getCode() == KeyCode.ESCAPE) {
-				stop();
-				stage.setScene(m.getMenuScene(stage));
+		root.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.W) {
+					world.movePlayer(Direction.NORTH);
+				} else if (event.getCode() == KeyCode.S) {
+					world.movePlayer(Direction.SOUTH);
+				} else if (event.getCode() == KeyCode.A) {
+					world.movePlayer(Direction.WEST);
+				} else if (event.getCode() == KeyCode.D) {
+					world.movePlayer(Direction.EAST);
+				} else if (event.getCode() == KeyCode.ESCAPE) {
+					stop();
+					stage.setScene(m.getMenuScene(stage));
+				}
+				event.consume();
 			}
 		});
+		
+		root.setOnMouseMoved(mouse -> {
+			mouseX = mouse.getX();
+			mouseY = mouse.getY();
+		});
+		
+		Button saveGame = new Button("Save game");
+		saveGame.setPrefWidth(100*settings.getScale());
+		saveGame.setScaleX(settings.getScale());
+		saveGame.setScaleY(settings.getScale());
+		saveGame.setOnMouseClicked(event -> {
+			try {
+				world.saveGame(savegamePath);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		saveGame.setLayoutX(canvas.getWidth()/2 - saveGame.getPrefWidth()/2);
+		saveGame.setLayoutY(8*settings.getScale());
+		
+		
 		root.getChildren().add(canvas);
+		root.getChildren().add(saveGame);
 		Scene scene = new Scene(root);
 		timer = new AnimationTimer() {
 			@Override
@@ -115,5 +133,11 @@ public class Game {
 		};
 		timer.start();
 		return scene;
+	}
+
+	public static Game loadGame(Settings settings2) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+		Game game = new Game(settings2);
+		game.world.loadGame(savegamePath);
+		return game;
 	}
 }

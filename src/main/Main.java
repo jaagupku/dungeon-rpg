@@ -32,32 +32,49 @@ public class Main extends Application {
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
 		VBox menuButtons = new VBox();
-		menuButtons.setSpacing(10);
+		menuButtons.setSpacing(10 * Math.pow(settings.getScale(), 2.5));
 
 		Button loadGame = new Button("Load Game");
-		loadGame.setOnMouseClicked(event -> System.out.println("load game"));
+		loadGame.setScaleX(settings.getScale());
+		loadGame.setScaleY(settings.getScale());
+		loadGame.setOnMouseClicked(event -> {
+			try {
+				Game game = Game.loadGame(settings);
+				setScene(stage, game.getGameScene(stage, this));
+			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		});
 		menuButtons.getChildren().add(loadGame);
 
 		Button newGame = new Button("New Game");
+		newGame.setScaleX(settings.getScale());
+		newGame.setScaleY(settings.getScale());
 		newGame.setOnMouseClicked(event -> {
 			try {
 				Game game = new Game(settings);
 				setScene(stage, game.getGameScene(stage, this));
 			} catch (ParserConfigurationException | SAXException | IOException | TiledMapEncodingException e) {
-				throw new RuntimeException(e.getMessage());
+				throw new RuntimeException(e);
 			}
 		});
 		menuButtons.getChildren().add(newGame);
 
 		Button settingsButton = new Button("Settings");
+		settingsButton.setScaleX(settings.getScale());
+		settingsButton.setScaleY(settings.getScale());
 		settingsButton.setOnMouseClicked(event -> setScene(stage, getSettingsScene(stage)));
 		menuButtons.getChildren().add(settingsButton);
 
 		Button helpButton = new Button("Help");
+		helpButton.setScaleX(settings.getScale());
+		helpButton.setScaleY(settings.getScale());
 		helpButton.setOnMouseClicked(event -> setScene(stage, getHelpScene(stage)));
 		menuButtons.getChildren().add(helpButton);
 
 		Button exitButton = new Button("Exit");
+		exitButton.setScaleX(settings.getScale());
+		exitButton.setScaleY(settings.getScale());
 		exitButton.setOnMouseClicked(event -> Platform.exit());
 		menuButtons.getChildren().add(exitButton);
 
@@ -151,8 +168,8 @@ public class Main extends Application {
 		Scene scene = new Scene(root, settings.getWinWidth(), settings.getWinHeight());
 		root.setId("pane");
 		scene.getStylesheets().add(getClass().getResource("/menu.css").toExternalForm());
-		scene.getRoot().setStyle("-fx-background-image: url('background.jpg'); -fx-background-size: " + settings.getWinWidth()
-				+ "px " + settings.getWinHeight() + "px;");
+		scene.getRoot().setStyle("-fx-background-image: url('images/background.jpg'); -fx-background-size: "
+				+ settings.getWinWidth() + "px " + settings.getWinHeight() + "px;");
 		return scene;
 	}
 

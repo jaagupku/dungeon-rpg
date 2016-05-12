@@ -136,6 +136,10 @@ public class Fighter {
 	final ReadOnlyIntegerProperty healthProperty() {
 		return IntegerProperty.readOnlyIntegerProperty(health);
 	}
+	
+	void setHealth(int hp){
+		health.set(hp);
+	}
 
 	public int getMaxHealth() {
 		return maxHealth;

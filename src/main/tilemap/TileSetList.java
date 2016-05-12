@@ -14,7 +14,7 @@ public class TileSetList {
 	private Image missingTile;
 
 	public TileSetList(List<Node> sheets, double scale, int tileSize) {
-		missingTile = TileSet.loadImagesFromTilesheet("missing.png", 1, 1, 48, scale).get(0);
+		missingTile = TileSet.loadImagesFromTilesheet("images\\missing.png", 1, 1, 48, scale).get(0);
 		tileSets = new ArrayList<TileSet>();
 		for (Node n : sheets) {
 			Element e = (Element) n;

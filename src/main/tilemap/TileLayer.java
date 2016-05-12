@@ -4,7 +4,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javafx.scene.canvas.GraphicsContext;
-import main.Game;
 import main.game.Renderable;
 
 public class TileLayer implements Renderable {

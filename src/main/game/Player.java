@@ -1,5 +1,9 @@
 package main.game;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -18,19 +22,22 @@ public class Player extends Fighter implements Renderable, Movable {
 	private Timeline turnDelayTimeline;
 	private Bar healthBar, xpBar;
 
-	public Player(int x, int y, int maxHealth, Image img) {
-		super("Player", maxHealth, 10, 7, 3, 3);
+	public Player(int x, int y) {
+		super("Player", 100, 10, 7, 3, 3);
 		setX(x);
 		setY(y);
 		level = 1;
 		xp = 0;
 		prevXp = 0;
 		nextXp = xpToNextLevel();
-		this.img = img;
 		hasTurn = true;
 		turnDelayTimeline = new Timeline();
 
 		healthProperty().addListener(cl -> updateHpBar());
+	}
+
+	public void setImage(Image img) {
+		this.img = img;
 	}
 
 	void initBars(double width, double heigth) {
@@ -127,7 +134,6 @@ public class Player extends Fighter implements Renderable, Movable {
 		level++;
 		nextXp = xpToNextLevel();
 		updateXpBar();
-		System.out.println("You have leveled up. You are now level " + level);
 	}
 
 	public boolean hasTurn() {
@@ -168,5 +174,34 @@ public class Player extends Fighter implements Renderable, Movable {
 
 	public int getXp() {
 		return xp;
+	}
+	
+	private void setXp(int xp){
+		this.xp = xp;
+	}
+
+	public void save(DataOutputStream dos) throws IOException {
+		dos.writeInt(xProperty().intValue());
+		dos.writeInt(yProperty().intValue());
+		dos.writeInt(xp);
+		dos.writeInt(getHealth());
+
+	}
+
+	public static Player load(DataInputStream dis, double width, double heigth) throws IOException {
+		int x = dis.readInt();
+		int y = dis.readInt();
+		int xp = dis.readInt();
+		int hp = dis.readInt();
+		Player p = new Player(x, y);
+		p.initBars(width, heigth);
+		for (int i = xp; i > 0; i -= p.xpToNextLevel()) {
+			p.levelUp();
+		}
+		p.setXp(xp);
+		p.setHealth(hp);
+		p.updateHpBar();
+		p.updateXpBar();
+		return p;
 	}
 }

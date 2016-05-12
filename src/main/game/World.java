@@ -1,7 +1,13 @@
 package main.game;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +35,9 @@ public class World {
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
 	private int tileSize = -1;
+	private double winWidth, winHeight, scale;
 
-	public World(double winWidth, double winHeigth, double scale)
+	public World(double winWidth, double winHeight, double scale)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		int counter = 0;
 		File f;
@@ -53,11 +60,14 @@ public class World {
 		}
 		if (rooms.size() == 0)
 			throw new FileNotFoundException("resources\\rooms\\test0.tmx not found.");
+		this.winWidth = winWidth;
+		this.winHeight = winHeight;
+		this.scale = scale;
 		currentRoom = rooms.get(0);
 		currentRoom.resumeAnimations();
-		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY(), 100,
-				TileSet.loadImagesFromTilesheet("player.png", 1, 1, 48, scale).get(0));
-		player.initBars(winWidth, winHeigth);
+		player = new Player(currentRoom.getEntranceX(), currentRoom.getEntranceY());
+		player.setImage(TileSet.loadImagesFromTilesheet("images\\player.png", 1, 1, 48, scale).get(0));
+		player.initBars(winWidth, winHeight);
 		Monster.loadMonsterImages(scale, tileSize);
 		tileSize *= scale;
 		HitSplat.setScaleAndTileSize(scale, tileSize);
@@ -183,5 +193,40 @@ public class World {
 	public void stop() {
 		currentRoom.stopAnimations();
 
+	}
+
+	public void saveGame(String path) throws IOException {
+		// TODO Auto-generated method stub
+		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)));
+		
+		dos.writeInt(rooms.size());
+		dos.writeInt(rooms.indexOf(currentRoom));
+		player.save(dos);
+		for(Room r: rooms){
+			r.save(dos);
+		}
+		
+		dos.close();
+	}
+	
+	public void loadGame(String path) throws IOException{
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
+		
+		int roomsAmount = dis.readInt();
+		if(roomsAmount != rooms.size()){
+			dis.close();
+			throw new IOException("Corrupted or outdated save game.");
+		}
+		
+		int currentRoomId = dis.readInt();
+		player = Player.load(dis, winWidth, winHeight);
+		player.setImage(TileSet.loadImagesFromTilesheet("images\\player.png", 1, 1, 48, scale).get(0));
+		currentRoom = rooms.get(currentRoomId);
+		
+		for(Room r: rooms){
+			r.load(dis);
+		}
+		
+		dis.close();
 	}
 }
