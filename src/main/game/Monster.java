@@ -140,8 +140,8 @@ public class Monster extends Fighter implements Renderable, Movable {
 		dos.writeInt(yProperty().intValue());
 		dos.writeInt(getHealth());
 	}
-	
-	public static Monster load(DataInputStream dis) throws IOException{
+
+	public static Monster load(DataInputStream dis) throws IOException {
 		int id = dis.readInt();
 		int x = dis.readInt();
 		int y = dis.readInt();

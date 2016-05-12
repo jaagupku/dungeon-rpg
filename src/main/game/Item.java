@@ -1,5 +1,8 @@
 package main.game;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -41,6 +44,16 @@ public class Item implements Renderable {
 	@Override
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
 		gc.drawImage(img, x * tileSize - offsetX, y * tileSize - offsetY);
+
+	}
+
+	public static Item load(DataInputStream dis) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void save(DataOutputStream dos) {
+		// TODO Auto-generated method stub
 
 	}
 

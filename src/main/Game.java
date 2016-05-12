@@ -11,7 +11,6 @@ import org.xml.sax.SAXException;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -45,7 +44,6 @@ public class Game {
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		this.settings = settings;
 		canvas = new Canvas(settings.getWinWidth(), settings.getWinHeight());
-		
 
 		Monster.loadMonstersFromFile(new File("resources\\monsters.txt"));
 		world = new World(settings.getWinWidth(), settings.getWinHeight(), settings.getScale());
@@ -99,14 +97,14 @@ public class Game {
 				event.consume();
 			}
 		});
-		
+
 		root.setOnMouseMoved(mouse -> {
 			mouseX = mouse.getX();
 			mouseY = mouse.getY();
 		});
-		
+
 		Button saveGame = new Button("Save game");
-		saveGame.setPrefWidth(100*settings.getScale());
+		saveGame.setPrefWidth(100 * settings.getScale());
 		saveGame.setScaleX(settings.getScale());
 		saveGame.setScaleY(settings.getScale());
 		saveGame.setOnMouseClicked(event -> {
@@ -116,10 +114,9 @@ public class Game {
 				throw new RuntimeException(e);
 			}
 		});
-		saveGame.setLayoutX(canvas.getWidth()/2 - saveGame.getPrefWidth()/2);
-		saveGame.setLayoutY(8*settings.getScale());
-		
-		
+		saveGame.setLayoutX(canvas.getWidth() / 2 - saveGame.getPrefWidth() / 2);
+		saveGame.setLayoutY(8 * settings.getScale());
+
 		root.getChildren().add(canvas);
 		root.getChildren().add(saveGame);
 		Scene scene = new Scene(root);
@@ -135,7 +132,8 @@ public class Game {
 		return scene;
 	}
 
-	public static Game loadGame(Settings settings2) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+	public static Game loadGame(Settings settings2)
+			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		Game game = new Game(settings2);
 		game.world.loadGame(savegamePath);
 		return game;

@@ -392,17 +392,25 @@ public class Room {
 
 	public void save(DataOutputStream dos) throws IOException {
 		dos.writeInt(monsters.size());
-		for(Monster m : monsters){
+		for (Monster m : monsters) {
 			m.save(dos);
 		}
+		dos.writeInt(items.size());
+		for (Item i : items) {
+			i.save(dos);
+		}
 	}
-	
-	public void load(DataInputStream dis) throws IOException{
+
+	public void load(DataInputStream dis) throws IOException {
 		monsters.clear();
 		items.clear();
-		int n = dis.readInt();
-		for(int i=0; i<n; i++){
+		int nMonsters = dis.readInt();
+		for (int i = 0; i < nMonsters; i++) {
 			monsters.add(Monster.load(dis));
+		}
+		int nItems = dis.readInt();
+		for (int i = 0; i < nItems; i++) {
+			items.add(Item.load(dis));
 		}
 	}
 }

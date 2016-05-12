@@ -175,8 +175,8 @@ public class Player extends Fighter implements Renderable, Movable {
 	public int getXp() {
 		return xp;
 	}
-	
-	private void setXp(int xp){
+
+	private void setXp(int xp) {
 		this.xp = xp;
 	}
 

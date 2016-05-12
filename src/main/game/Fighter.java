@@ -136,8 +136,8 @@ public class Fighter {
 	final ReadOnlyIntegerProperty healthProperty() {
 		return IntegerProperty.readOnlyIntegerProperty(health);
 	}
-	
-	void setHealth(int hp){
+
+	void setHealth(int hp) {
 		health.set(hp);
 	}
 
