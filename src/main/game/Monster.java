@@ -13,8 +13,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import main.Game;
 import main.tilemap.TileSet;
@@ -72,22 +76,6 @@ public class Monster extends Fighter implements Renderable, Movable {
 	@Override
 	public void render(GraphicsContext gc, double offsetX, double offsetY, int tileSize) {
 		gc.drawImage(images.get(id), getX() * tileSize - offsetX, getY() * tileSize - offsetY);
-
-		/*
-		 * if (Game.getMouseX() > getX() * Game.tileSize - offsetX &&
-		 * Game.getMouseX() < getX() * Game.tileSize - offsetX + Game.tileSize
-		 * && Game.getMouseY() > getY() * Game.tileSize - offsetY &&
-		 * Game.getMouseY() < getY() * Game.tileSize - offsetY + Game.tileSize)
-		 * { gc.setFill(Color.BLACK); gc.setGlobalAlpha(.4); Font f = new
-		 * Font(15 * Main.getScale()); gc.setFont(f);
-		 * gc.fillRect(Game.getMouseX(), Game.getMouseY() + 6,
-		 * (getName().length() * 8)*Main.getScale(), 15 * Main.getScale() + 12);
-		 * gc.setGlobalAlpha(1); gc.setTextAlign(TextAlignment.LEFT);
-		 * gc.setTextBaseline(VPos.TOP); gc.setFill(Color.WHITE);
-		 * gc.fillText(getName(), Game.getMouseX() + 4, Game.getMouseY() + 7);
-		 * 
-		 * }
-		 */
 	}
 
 	@Override
@@ -149,6 +137,21 @@ public class Monster extends Fighter implements Renderable, Movable {
 		Monster m = new Monster(x, y, id);
 		m.setHealth(hp);
 		return m;
+	}
+
+	public void drawHud(GraphicsContext gc, Font f, int tileSize, double scale, double offset, double offset2) {
+
+		if (Game.getMouseX() > getX() * tileSize - offset && Game.getMouseX() < getX() * tileSize - offset + tileSize
+				&& Game.getMouseY() > getY() * tileSize - offset2
+				&& Game.getMouseY() < getY() * tileSize - offset2 + tileSize) {
+			gc.setFont(f);
+			gc.setTextAlign(TextAlignment.LEFT);
+			gc.setTextBaseline(VPos.TOP);
+			gc.setFill(Color.WHITE);
+			gc.fillText(getName(), Game.getMouseX() + 5 * scale, Game.getMouseY() + 7 * scale);
+
+		}
+
 	}
 
 }

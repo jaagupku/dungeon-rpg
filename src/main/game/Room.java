@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -123,7 +124,7 @@ public class Room {
 	 *            - y offset of scene
 	 */
 	public void render(GraphicsContext gc, Player player, double offsetX, double offsetY, int tileSize) {
-		List<Renderable> renderOrder = new ArrayList<Renderable>();
+		List<Renderable> renderOrder = new LinkedList<Renderable>();
 
 		renderOrder.add(map);
 		renderOrder.addAll(items);
@@ -131,6 +132,10 @@ public class Room {
 		renderOrder.add(player);
 
 		renderOrder.forEach(elem -> elem.render(gc, offsetX, offsetY, tileSize));
+	}
+	
+	public final List<Monster> getMonsters(){
+		return monsters;
 	}
 
 	/**
@@ -314,6 +319,34 @@ public class Room {
 			this.entranceY = entranceY;
 	}
 
+	public void stopAnimations() {
+		map.stopAnimations();
+	}
+
+	public void save(DataOutputStream dos) throws IOException {
+		dos.writeInt(monsters.size());
+		for (Monster m : monsters) {
+			m.save(dos);
+		}
+		dos.writeInt(items.size());
+		for (Item i : items) {
+			i.save(dos);
+		}
+	}
+
+	public void load(DataInputStream dis) throws IOException {
+		monsters.clear();
+		items.clear();
+		int nMonsters = dis.readInt();
+		for (int i = 0; i < nMonsters; i++) {
+			monsters.add(Monster.load(dis));
+		}
+		int nItems = dis.readInt();
+		for (int i = 0; i < nItems; i++) {
+			items.add(Item.load(dis));
+		}
+	}
+
 	private class Connection {
 		// Ühendusel on nimi, ja koordinaadid
 		private String name;
@@ -383,34 +416,6 @@ public class Room {
 				return y - 1;
 			}
 			return y;
-		}
-	}
-
-	public void stopAnimations() {
-		map.stopAnimations();
-	}
-
-	public void save(DataOutputStream dos) throws IOException {
-		dos.writeInt(monsters.size());
-		for (Monster m : monsters) {
-			m.save(dos);
-		}
-		dos.writeInt(items.size());
-		for (Item i : items) {
-			i.save(dos);
-		}
-	}
-
-	public void load(DataInputStream dis) throws IOException {
-		monsters.clear();
-		items.clear();
-		int nMonsters = dis.readInt();
-		for (int i = 0; i < nMonsters; i++) {
-			monsters.add(Monster.load(dis));
-		}
-		int nItems = dis.readInt();
-		for (int i = 0; i < nItems; i++) {
-			items.add(Item.load(dis));
 		}
 	}
 }

@@ -21,6 +21,7 @@ import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import main.Game;
 import main.hud.HitSplat;
@@ -36,6 +37,8 @@ public class World {
 	private Room currentRoom;
 	private int tileSize = -1;
 	private double winWidth, winHeight, scale;
+	private Font monsterLabelFont;
+	private double[] offset;
 
 	public World(double winWidth, double winHeight, double scale)
 			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
@@ -71,6 +74,8 @@ public class World {
 		Monster.loadMonsterImages(scale, tileSize);
 		tileSize *= scale;
 		HitSplat.setScaleAndTileSize(scale, tileSize);
+		monsterLabelFont = new Font(14 * scale);
+		offset = new double[] { 0, 0 };
 	}
 
 	/**
@@ -79,7 +84,7 @@ public class World {
 	 * @param canvas
 	 */
 	public void render(Canvas canvas) {
-		double[] offset = getOffset(canvas.getWidth(), canvas.getHeight());
+		updateOffset(canvas.getWidth(), canvas.getHeight());
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		currentRoom.render(gc, player, offset[0], offset[1], tileSize);
 
@@ -90,7 +95,12 @@ public class World {
 
 	public void drawHud(Canvas canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		currentRoom.getMonsters()
+				.forEach(mons -> mons.drawHud(gc, monsterLabelFont, tileSize, scale, offset[0], offset[1]));
+
 		player.drawBars(gc);
+
 	}
 
 	public void movePlayer(Direction dir) {
@@ -146,31 +156,30 @@ public class World {
 	 *            - Height of the canvas
 	 * @return {offsetX, offsetY}
 	 */
-	private double[] getOffset(double screenWidth, double screenHeight) {
-		double offsetX, offsetY;
+	private void updateOffset(double screenWidth, double screenHeight) {
 		double midX = screenWidth / 2, midY = screenHeight / 2;
 		if (currentRoom.getWidth() * tileSize > screenWidth) {
-			offsetX = player.getX() * tileSize - midX + tileSize / 2;
-			if (offsetX < 0)
-				offsetX = 0;
-			else if (offsetX > currentRoom.getWidth() * tileSize - screenWidth) {
-				offsetX = currentRoom.getWidth() * tileSize - screenWidth;
+			offset[0] = player.getX() * tileSize - midX + tileSize / 2;
+			if (offset[0] < 0)
+				offset[0] = 0;
+			else if (offset[0] > currentRoom.getWidth() * tileSize - screenWidth) {
+				offset[0] = currentRoom.getWidth() * tileSize - screenWidth;
 			}
 		} else {
-			offsetX = currentRoom.getWidth() * tileSize / 2 - screenWidth / 2;
+			offset[0] = currentRoom.getWidth() * tileSize / 2 - screenWidth / 2;
 		}
 
 		if (currentRoom.getHeight() * tileSize > screenHeight) {
-			offsetY = player.getY() * tileSize - midY + tileSize / 2;
-			if (offsetY < 0)
-				offsetY = 0;
-			else if (offsetY > currentRoom.getHeight() * tileSize - screenHeight) {
-				offsetY = currentRoom.getHeight() * tileSize - screenHeight;
+			offset[1] = player.getY() * tileSize - midY + tileSize / 2;
+			if (offset[1] < 0)
+				offset[1] = 0;
+			else if (offset[1] > currentRoom.getHeight() * tileSize - screenHeight) {
+				offset[1] = currentRoom.getHeight() * tileSize - screenHeight;
 			}
 		} else {
-			offsetY = currentRoom.getHeight() * tileSize / 2 - screenHeight / 2;
+			offset[1] = currentRoom.getHeight() * tileSize / 2 - screenHeight / 2;
 		}
-		return new double[] { offsetX, offsetY };
+
 	}
 
 	public void monsterTurn() {
@@ -198,35 +207,35 @@ public class World {
 	public void saveGame(String path) throws IOException {
 		// TODO Auto-generated method stub
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)));
-		
+
 		dos.writeInt(rooms.size());
 		dos.writeInt(rooms.indexOf(currentRoom));
 		player.save(dos);
-		for(Room r: rooms){
+		for (Room r : rooms) {
 			r.save(dos);
 		}
-		
+
 		dos.close();
 	}
-	
-	public void loadGame(String path) throws IOException{
+
+	public void loadGame(String path) throws IOException {
 		DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
-		
+
 		int roomsAmount = dis.readInt();
-		if(roomsAmount != rooms.size()){
+		if (roomsAmount != rooms.size()) {
 			dis.close();
 			throw new IOException("Corrupted or outdated save game.");
 		}
-		
+
 		int currentRoomId = dis.readInt();
 		player = Player.load(dis, winWidth, winHeight);
 		player.setImage(TileSet.loadImagesFromTilesheet("images\\player.png", 1, 1, 48, scale).get(0));
 		currentRoom = rooms.get(currentRoomId);
-		
-		for(Room r: rooms){
+
+		for (Room r : rooms) {
 			r.load(dis);
 		}
-		
+
 		dis.close();
 	}
 }
