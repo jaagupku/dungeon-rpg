@@ -102,7 +102,7 @@ public class Settings {
 	}
 
 	public static void saveSettings(Settings s) {
-
+		// TODO
 	}
 
 	public double getScale() {

@@ -1,11 +1,13 @@
 package main;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -17,6 +19,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -91,6 +95,13 @@ public class Main extends Application {
 		backButton.setOnMouseClicked(event -> setScene(stage, getMenuScene(stage)));
 		bottom.getChildren().add(backButton);
 		bottom.setAlignment(Pos.CENTER);
+
+		Label helpText = new Label(
+				"The goal of the game is to explore dungeons.\nButtons:\nW - to move up\nA - to move left\nS - to move down\nD - to move right.\n\nBackground music by Waterflame. Track name is \"Waterflame - Glorious Morning 2\"\nwww.youtube.com/waterflame89");
+		helpText.setFont(new Font("verdana", 15 * settings.getScale()));
+		helpText.setTextFill(Color.WHITE);
+		helpText.setWrapText(true);
+		root.setCenter(helpText);
 		root.setBottom(bottom);
 
 		return getDefaultScene(stage, root);
@@ -102,7 +113,7 @@ public class Main extends Application {
 	}
 
 	private Scene getSettingsScene(Stage stage) {
-		Font labelFont = new Font("verdana", 24 * settings.getScale());
+		Font labelFont = new Font("verdana", 15 * settings.getScale());
 		BorderPane root = new BorderPane();
 		VBox bottom = new VBox();
 		HBox center = new HBox();
@@ -118,6 +129,8 @@ public class Main extends Application {
 		center.getChildren().add(centRight);
 
 		Button backButton = new Button("Back");
+		backButton.setScaleX(settings.getScale());
+		backButton.setScaleY(settings.getScale());
 		backButton.setOnMouseClicked(event -> setScene(stage, getMenuScene(stage)));
 		bottom.getChildren().add(backButton);
 		bottom.setAlignment(Pos.CENTER);
@@ -125,10 +138,16 @@ public class Main extends Application {
 		root.setCenter(center);
 
 		Label resLabel = new Label("Resolution:");
+		resLabel.setScaleX(settings.getScale());
+		resLabel.setScaleY(settings.getScale());
 		resLabel.setFont(labelFont);
 		resLabel.setTextFill(Color.WHITE);
 
 		ComboBox<String> resolutions = new ComboBox<String>(Settings.getResolutionLabels(settings.getAspectRatio()));
+		resolutions.setScaleX(settings.getScale());
+		resolutions.setScaleY(settings.getScale());
+		resolutions.setPrefWidth(85*settings.getScale());
+		
 		resolutions.setValue(settings.getWinWidth() + "x" + settings.getWinHeight());
 		resolutions.valueProperty().addListener((ov, s1, s2) -> {
 			if (s2 != null) {
@@ -140,11 +159,16 @@ public class Main extends Application {
 		});
 
 		Label aspectRatioLabel = new Label("Aspect ratio:");
+		aspectRatioLabel.setScaleX(settings.getScale());
+		aspectRatioLabel.setScaleY(settings.getScale());
 		aspectRatioLabel.setFont(labelFont);
 		aspectRatioLabel.setTextFill(Color.WHITE);
 		centLeft.getChildren().add(aspectRatioLabel);
 
 		ComboBox<String> aspectRatios = new ComboBox<String>(Settings.getAspectRatioLabels());
+		aspectRatios.setScaleX(settings.getScale());
+		aspectRatios.setScaleY(settings.getScale());
+		aspectRatios.setPrefWidth(85*settings.getScale());
 		aspectRatios.valueProperty().addListener((ov, s1, s2) -> {
 			settings.setAspectRatio(s2);
 			resolutions.setItems(Settings.getResolutionLabels(s2));
@@ -175,19 +199,18 @@ public class Main extends Application {
 
 	@Override
 	public void stop() {
-		System.out.println("Application closed! Save game in this method or something");
+		// TODO
+		//System.out.println("Application closed! Save game in this method or something");
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		/*
-		 * BACKGROUND MUSIC String source = new
-		 * File("resources/Glorious-Morning-2-.mp3").toURI().toString();
-		 * MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
-		 * mediaPlayer.setCycleCount(Timeline.INDEFINITE);
-		 * mediaPlayer.setAutoPlay(true); // TODO
-		 * mediaPlayer.setVolume(settings.getAttribute("music_volume"));
-		 */
+
+		String source = new File("resources/Glorious-Morning-2-.mp3").toURI().toString();
+		MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
+		mediaPlayer.setCycleCount(Timeline.INDEFINITE);
+		mediaPlayer.setAutoPlay(true); // TODO
+
 		settings = Settings.loadSettings();
 		setScene(primaryStage, getMenuScene(primaryStage));
 		primaryStage.setResizable(false);

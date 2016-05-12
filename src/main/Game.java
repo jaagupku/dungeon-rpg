@@ -132,8 +132,7 @@ public class Game {
 		return scene;
 	}
 
-	public static Game loadGame(Settings settings2)
-			throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
+	public static Game loadGame(Settings settings2) throws ParserConfigurationException, SAXException, IOException, TiledMapEncodingException {
 		Game game = new Game(settings2);
 		game.world.loadGame(savegamePath);
 		return game;

@@ -17,8 +17,6 @@
 .combo-box-popup .list-view .list-cell 
 {
     -fx-padding: 4 0 4 5;
-
-    /* No alternate highlighting */
     -fx-background-color: grey;
 }
 
@@ -39,9 +37,7 @@
 .combo-box {
 	-fx-background-color: 
         linear-gradient(#bb0a21, #252627, #252627, #252627, #bb0a21);
-    -fx-pref-width: 200px;
     -fx-text-fill: white;
-    -fx-font-size: 15px;
 }
 
 .combo-box:hover {
