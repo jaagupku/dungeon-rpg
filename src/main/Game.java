@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import main.game.Direction;
+import main.game.Gamestate;
 import main.game.Monster;
 import main.game.World;
 import main.hud.HitSplat;
@@ -74,8 +75,6 @@ public class Game {
 	private void stop() {
 		timer.stop();
 		world.stop();
-		world = null;
-		canvas = null;
 	}
 
 	public Scene getGameScene(Stage stage, Main m) {
@@ -92,7 +91,11 @@ public class Game {
 					world.movePlayer(Direction.EAST);
 				} else if (event.getCode() == KeyCode.ESCAPE) {
 					stop();
-					stage.setScene(m.getMenuScene(stage));
+					m.setScene(stage, m.getMenuScene(stage));
+				}
+				if(world.getGameState() != Gamestate.GAME_NOT_OVER){
+					stop();
+					m.setScene(stage, m.getGameOverScene(stage, world.getGameState()));
 				}
 				event.consume();
 			}
@@ -104,7 +107,7 @@ public class Game {
 		});
 
 		Button saveGame = new Button("Save game");
-		saveGame.setPrefWidth(100 * settings.getScale());
+		saveGame.setPrefWidth(65 * settings.getScale());
 		saveGame.setScaleX(settings.getScale());
 		saveGame.setScaleY(settings.getScale());
 		saveGame.setOnMouseClicked(event -> {

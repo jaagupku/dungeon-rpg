@@ -23,7 +23,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import main.game.Gamestate;
 import main.tilemap.TiledMapEncodingException;
 
 /*
@@ -87,6 +89,40 @@ public class Main extends Application {
 
 		return getDefaultScene(stage, root);
 	}
+	
+	Scene getGameOverScene(Stage stage, Gamestate state){
+		BorderPane root = new BorderPane();
+		VBox bottom = new VBox();
+		Label endText = new Label();
+		endText.setTextFill(Color.WHITE);
+		endText.setFont(new Font(30));
+		endText.setTextAlignment(TextAlignment.CENTER);
+		switch(state){
+		case PLAYER_WIN:
+			endText.setText("Congratsiolations!\nYou won!\nGG WP".toUpperCase());
+			break;
+		case PLAYER_LOSE:
+			endText.setText("You lost!\nBe more careful next time.".toUpperCase());
+			break;
+		default:
+			endText.setText("wow");
+			break;
+		}
+		endText.setScaleX(settings.getScale());
+		endText.setScaleY(settings.getScale());
+		root.setCenter(endText);
+		
+		Button mainMenuButton = new Button("Main menu");
+		mainMenuButton.setScaleX(settings.getScale());
+		mainMenuButton.setScaleY(settings.getScale());
+		mainMenuButton.setOnMouseClicked(event -> setScene(stage, getMenuScene(stage)));
+		bottom.getChildren().add(mainMenuButton);
+		bottom.setAlignment(Pos.CENTER);
+		root.setBottom(bottom);
+		
+		
+		return getDefaultScene(stage, root);
+	}
 
 	private Scene getHelpScene(Stage stage) {
 		BorderPane root = new BorderPane();
@@ -107,7 +143,7 @@ public class Main extends Application {
 		return getDefaultScene(stage, root);
 	}
 
-	private void setScene(Stage stage, Scene scene) {
+	void setScene(Stage stage, Scene scene) {
 		stage.setScene(scene);
 		stage.setFullScreen(settings.isFullscreen());
 	}

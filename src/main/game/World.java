@@ -31,7 +31,6 @@ import main.tilemap.TiledMap;
 import main.tilemap.TiledMapEncodingException;
 
 public class World {
-	public static final int PLAYER_LOSE = 6, GAME_NOT_OVER = 7, PLAYER_WIN = 8;
 	private Player player;
 	private List<Room> rooms = new ArrayList<Room>();
 	private Room currentRoom;
@@ -186,17 +185,17 @@ public class World {
 		currentRoom.updateMonsters(player);
 	}
 
-	public int getGameState() {
+	public Gamestate getGameState() {
 		int nMonsters = 0;
 		for (Room r : rooms) {
 			nMonsters += r.getNumberOfMonsters();
 		}
 		if (nMonsters == 0)
-			return PLAYER_WIN;
+			return Gamestate.PLAYER_WIN;
 		if (player.getHealth() <= 0)
-			return PLAYER_LOSE;
+			return Gamestate.PLAYER_LOSE;
 		// TODO Game can't be won.
-		return GAME_NOT_OVER;
+		return Gamestate.GAME_NOT_OVER;
 	}
 
 	public void stop() {
