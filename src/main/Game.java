@@ -107,7 +107,7 @@ public class Game {
 		});
 
 		Button saveGame = new Button("Save game");
-		saveGame.setPrefWidth(65 * settings.getScale());
+		saveGame.setPrefWidth(100);
 		saveGame.setScaleX(settings.getScale());
 		saveGame.setScaleY(settings.getScale());
 		saveGame.setOnMouseClicked(event -> {

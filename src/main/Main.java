@@ -255,8 +255,8 @@ public class Main extends Application {
 		
 		String source = new File("resources/Glorious-Morning-2-.mp3").toURI().toString();
 		MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
-		mediaPlayer.setCycleCount(Timeline.INDEFINITE);
-		mediaPlayer.setAutoPlay(true); // TODO
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		mediaPlayer.setAutoPlay(true);
 
 		settings = Settings.loadSettings();
 		setScene(primaryStage, getMenuScene(primaryStage));
