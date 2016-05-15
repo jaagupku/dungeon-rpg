@@ -1,6 +1,7 @@
 package main;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,12 +35,20 @@ import main.tilemap.TiledMapEncodingException;
 public class Main extends Application {
 
 	private Settings settings;
+	private Font titleFont;
 
 	Scene getMenuScene(Stage stage) {
 		BorderPane root = new BorderPane();
 		VBox menuButtons = new VBox();
 		menuButtons.setSpacing(10 * Math.pow(settings.getScale(), 2.5));
-
+		
+		Label title = new Label("Dungeons & Rats");
+		title.setFont(titleFont);
+		title.setScaleX(settings.getScale());
+		title.setScaleY(settings.getScale());
+		title.setTextFill(Color.WHITE);
+		menuButtons.getChildren().add(title);
+		
 		Button loadGame = new Button("Load Game");
 		loadGame.setScaleX(settings.getScale());
 		loadGame.setScaleY(settings.getScale());
@@ -241,7 +250,9 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
+		
+		titleFont = Font.loadFont(new FileInputStream(new File("./resources/fonts/almendra-sc-regular/AlmendraSC-Regular.ttf")), 55);
+		
 		String source = new File("resources/Glorious-Morning-2-.mp3").toURI().toString();
 		MediaPlayer mediaPlayer = new MediaPlayer(new Media(source));
 		mediaPlayer.setCycleCount(Timeline.INDEFINITE);
